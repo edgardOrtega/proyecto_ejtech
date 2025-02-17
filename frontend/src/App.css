@@ -1,0 +1,20 @@
+.navbar-nav .nav-link {
+  color: black !important;
+}
+
+.navbar-nav .nav-link.active {
+  background-color: yellow !important;
+  font-weight: bold;
+  border-radius: 10px;
+  padding: 8px 14px;
+}
+
+.logout-button {
+  background: none;
+  border: none;
+  color: black;
+  font-size: 16px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
