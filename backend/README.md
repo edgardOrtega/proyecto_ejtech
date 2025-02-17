@@ -18,11 +18,11 @@
 - CORS (Cross-Origin Resource Sharing) permite que tu API sea accesible desde otros dominios distintos al servidor backend.
 
 ## 📌Flujo general de la aplicación
-1️⃣ El usuario se registra o inicia sesión.
-2️⃣ Si inicia sesión correctamente, el backend genera un JWT.
-3️⃣ El usuario usa el token para acceder a rutas protegidas (ej. ver perfil, agregar productos).
-4️⃣ El backend maneja datos con PostgreSQL.
-5️⃣ El middleware cors permite que el frontend pueda comunicarse con la API sin problemas.
+- El usuario se registra o inicia sesión.
+- Si inicia sesión correctamente, el backend genera un JWT.
+- El usuario usa el token para acceder a rutas protegidas (ej. ver perfil, agregar productos).
+- El backend maneja datos con PostgreSQL.
+- El middleware cors permite que el frontend pueda comunicarse con la API sin problemas.
 
 ## 📂 Estructura del Proyecto
 ```
