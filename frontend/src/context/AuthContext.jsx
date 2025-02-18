@@ -23,7 +23,13 @@ export const AuthProvider = ({ children }) => {
             throw new Error(data.error || "Error al iniciar sesión");
         }
 
-        localStorage.setItem("token", data.token); // Guarda el token
+        // Guardamos el token y la información del usuario
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify({ email, rol: data.rol }));
+
+        // Actualizamos el estado de autenticación
+        setUser({ email, rol: data.rol });
+
         return { success: true, rol: data.rol };
     } catch (error) {
         return { success: false, message: error.message };

@@ -30,7 +30,7 @@ const Navegation = () => {
                 <Nav.Link as={NavLink} to="/Galeria" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Galería</Nav.Link>
 
                 {/* Enlaces solo para ADMINISTRADOR */}
-                {user.rol === "administrador" && (
+                {user.rol == "1" && (
                   <>
                     <Nav.Link as={NavLink} to="/ListarUsuarios" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Listar Usuarios</Nav.Link>
                     <Nav.Link as={NavLink} to="/ListarProductos" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Listar Producto</Nav.Link>
@@ -41,7 +41,7 @@ const Navegation = () => {
                 )}
 
                 {/* Enlaces solo para CLIENTE */}
-                {user.rol === "cliente" && (
+                {user.rol == "2" && (
                   <>
                     <Nav.Link as={NavLink} to="/Carrito" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Carrito</Nav.Link>
                     <Nav.Link as={NavLink} to="/Historial" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Historial</Nav.Link>
