@@ -3,43 +3,45 @@ import { createContext, useState, useContext, useEffect } from "react";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    // Intentamos recuperar el usuario desde localStorage al cargar la app
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
     const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+    if (savedUser) {
+      const parsedUser = JSON.parse(savedUser);
+      setUser({ ...parsedUser, rol: Number(parsedUser.rol) }); // Convertir rol a número
+    }
+  }, []);
 
   const login = async (email, password) => {
     try {
-        const response = await fetch("http://localhost:3000/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-        });
+      const response = await fetch("http://localhost:3000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-        const data = await response.json();
+      const data = await response.json();
 
-        if (!response.ok) {
-            throw new Error(data.error || "Error al iniciar sesión");
-        }
+      if (!response.ok) {
+        throw new Error(data.error || "Error al iniciar sesión");
+      }
 
-        // Guardamos el token y la información del usuario
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify({ email, rol: data.rol }));
+      const userData = { email, rol: Number(data.rol) }; // Convertir rol a número
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(userData));
+      setUser(userData);
 
-        // Actualizamos el estado de autenticación
-        setUser({ email, rol: data.rol });
-
-        return { success: true, rol: data.rol };
+      return { success: true, rol: userData.rol };
     } catch (error) {
-        return { success: false, message: error.message };
+      return { success: false, message: error.message };
     }
-};
-
+  };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("user"); // Eliminamos la sesión
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
   };
 
   return (

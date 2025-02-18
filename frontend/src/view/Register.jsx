@@ -11,7 +11,7 @@ const Register = () => {
     password: "",
     confirmPassword: "",
     fecha_nacimiento: "",
-    id_rol: 2, // Por defecto, cliente
+    id_rol: 1, // Por defecto, cliente
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
