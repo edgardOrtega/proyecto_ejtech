@@ -21,4 +21,12 @@ const registrarUsuario = async ({ username, email, password, fecha_nacimiento, i
     return result.rows[0];
 };
 
-module.exports = { registrarUsuario };
+// Función para verificar credenciales
+const verificarUsuario = async (email) => {
+    const query = "SELECT * FROM usuario WHERE email = $1";
+    const { rows } = await pool.query(query, [email]);
+    return rows[0]; // Devuelve el usuario encontrado o undefined
+};
+
+
+module.exports = { registrarUsuario, verificarUsuario };

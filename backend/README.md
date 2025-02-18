@@ -37,6 +37,7 @@ Proyecto_EDPAK/backend
 │   ├── test2.spect.js
 │   ├── test3.spect.js
 │   ├── test4.spect.js
+│── .env
 │── .gitignore
 ├── consultas.js
 ├── index.js
@@ -44,5 +45,6 @@ Proyecto_EDPAK/backend
 ├── package.json
 │── README.md
 │── script.sql
+
 ...
 ```
