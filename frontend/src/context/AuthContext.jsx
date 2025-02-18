@@ -7,17 +7,6 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
-<<<<<<< HEAD
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
-  
-=======
-    if (savedUser) {
-      const parsedUser = JSON.parse(savedUser);
-      setUser({ ...parsedUser, rol: Number(parsedUser.rol) }); // Convertir rol a número
-    }
-  }, []);
->>>>>>> 9316185efbe57d4369e1cd72388f80d326fdaf40
 
   const login = async (email, password) => {
     try {
