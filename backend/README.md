@@ -25,6 +25,7 @@
 - El usuario usa el token para acceder a rutas protegidas (ej. ver perfil, agregar productos).
 - El backend maneja datos con PostgreSQL.
 - El middleware cors permite que el frontend pueda comunicarse con la API sin problemas.
+- El middleware cors permite que el frontend pueda comunicarse con la API sin problemas.
 
 ## 📂 Estructura del Proyecto
 ```

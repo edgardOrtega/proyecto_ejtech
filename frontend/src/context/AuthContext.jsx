@@ -7,6 +7,11 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      const parsedUser = JSON.parse(savedUser);
+      setUser({ ...parsedUser, rol: Number(parsedUser.rol) }); // Convertir rol a número
+    }
+  }, []);
 
   const login = async (email, password) => {
     try {
