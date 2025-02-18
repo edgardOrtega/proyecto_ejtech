@@ -7,14 +7,9 @@ import Logout from "../view/Logout";
 import { useAuth } from "../context/AuthContext";
 
 const Navegation = () => {
-<<<<<<< HEAD
-  const { user } = useAuth(); // Obtenemos el usuario autenticado
-  console.log("User en Navigation:", user);
-=======
   const { user } = useAuth();
   const userRole = Number(user?.rol);
 
->>>>>>> 9316185efbe57d4369e1cd72388f80d326fdaf40
   return (
     <Navbar bg="light" expand="lg">
       <Container className="contenedor">
