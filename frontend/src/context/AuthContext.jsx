@@ -11,26 +11,25 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch("/data/listadoUsuarios.json");
-      const users = await response.json();
+        const response = await fetch("http://localhost:3000/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+        });
 
-      const foundUser = users.find(
-        (u) => u.Email === email && u.Password === password
-      );
+        const data = await response.json();
 
-      if (foundUser && foundUser.Activo) {
-        const userData = { userName: foundUser.userName, rol: foundUser.Rol };
-        setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData)); // Guardamos en localStorage
-        return { success: true, rol: foundUser.Rol };
-      } else {
-        return { success: false, message: "Credenciales incorrectas o usuario inactivo." };
-      }
+        if (!response.ok) {
+            throw new Error(data.error || "Error al iniciar sesión");
+        }
+
+        localStorage.setItem("token", data.token); // Guarda el token
+        return { success: true, rol: data.rol };
     } catch (error) {
-      console.error("Error al obtener usuarios:", error);
-      return { success: false, message: "Error en el servidor." };
+        return { success: false, message: error.message };
     }
-  };
+};
+
 
   const logout = () => {
     setUser(null);

@@ -24,31 +24,32 @@ app.post("/api/registro", async (req, res) => {
 });
 
 // Ruta para login
-app.post("/api/usuarios", async (req, res) => {
+app.post("/api/login", async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Verificar si el usuario existe
+        // Verificar si el usuario existe en la base de datos
         const usuario = await verificarUsuario(email);
         if (!usuario) return res.status(404).json({ error: "Usuario no encontrado" });
 
-        // Comparar la contraseña con la almacenada
+        // Comparar la contraseña
         const passwordValida = await bcrypt.compare(password, usuario.password);
         if (!passwordValida) return res.status(401).json({ error: "Credenciales incorrectas" });
 
         // Crear token JWT
         const token = jwt.sign(
             { id_usuario: usuario.id_usuario, email: usuario.email, id_rol: usuario.id_rol },
-            SECRET_KEY,
+            process.env.SECRET_KEY, // Usa dotenv para manejar claves
             { expiresIn: "2h" }
         );
 
-        res.json({ token });
+        res.json({ success: true, token, rol: usuario.id_rol });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Error en el servidor" });
     }
 });
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
