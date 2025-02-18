@@ -9,6 +9,7 @@
 | **express**        | ^4.21.2    | Framework de Node.js para construir servidores y manejar rutas. Permite definir endpoints (app.get(), app.post(), etc.). |
 | **pg**             | ^8.13.3    | Cliente de PostgreSQL para Node.js. Se usa para conectarse y ejecutar consultas en una base de datos PostgreSQL.|
 |**jsonwebtoken**    | ^9.0.2     | Librería para generar y verificar JSON Web Tokens (JWT). Se usa para autenticación y autorización en aplicaciones web y APIs.|
+|**bcryptjs**        | ^3.0.1     | es una biblioteca de Node.js que permite encriptar y comparar contraseñas de forma segura utilizando el algoritmo bcrypt.|
 
 ## ⚡ Tecnologías Utilizadas
 - Node.js es un entorno de ejecución para JavaScript en el lado del servidor. Permite crear aplicaciones web rápidas y escalables con un solo lenguaje (JavaScript).

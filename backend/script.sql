@@ -1,3 +1,7 @@
+-- primero que nada entra al pdAdmin
+CREATE DATABASE tienda_tecnologica;
+
+-- luego ingresa a la base de datos tienda_tecnologica
 -- Tabla: rol
 CREATE TABLE rol (
     id_rol SERIAL PRIMARY KEY,

@@ -1,17 +1,25 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const { obtenerJoyas, obtenerJoyasPorFiltros } = require("./consultas");
-const { loggerMiddleware } = require("./middleware/logger");
-const app = express();
-app.listen(3000, console.log("Server ON"));
+const { registrarUsuario } = require("./consultas");
+const logger = require("./middlewares/logger");
 
-app.use(loggerMiddleware)
-app.get("/joyas", async (req, res) => {
-  try {
-    const joyas = await obtenerJoyas(req.query); 
-    res.status(200).json(joyas); 
-  } catch (error) {
-    console.error("Error en la ruta /joyas:", error.message);
-    res.status(500).json({ error: "Error obteniendo las joyas" }); 
-  }
+const app = express();
+app.use(cors());
+app.use(express.json()); // Middleware para procesar JSON
+
+app.use(logger);
+// Ruta para registrar usuario
+app.post("/api/usuarios", async (req, res) => {
+    try {
+        const nuevoUsuario = await registrarUsuario(req.body);
+        res.status(201).json(nuevoUsuario);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
