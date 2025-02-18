@@ -5,10 +5,11 @@ const pool = new Pool({
     user: "tu_usuario",
     host: "localhost",
     database: "tienda_tecnologica",
-    password: "1234",
+    password: "12345",
     port: 5432,
 });
 
+// Funcion para verificar 
 const registrarUsuario = async ({ username, email, password, fecha_nacimiento, id_rol }) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const query = `
