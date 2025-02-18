@@ -10,6 +10,7 @@
 | **pg**             | ^8.13.3    | Cliente de PostgreSQL para Node.js. Se usa para conectarse y ejecutar consultas en una base de datos PostgreSQL.|
 |**jsonwebtoken**    | ^9.0.2     | Librería para generar y verificar JSON Web Tokens (JWT). Se usa para autenticación y autorización en aplicaciones web y APIs.|
 |**bcryptjs**        | ^3.0.1     | es una biblioteca de Node.js que permite encriptar y comparar contraseñas de forma segura utilizando el algoritmo bcrypt.|
+|dotenv              | ^16.4.7    |es una dependencia de Node.js que permite cargar variables de entorno desde un archivo .env en process.env.|
 
 ## ⚡ Tecnologías Utilizadas
 - Node.js es un entorno de ejecución para JavaScript en el lado del servidor. Permite crear aplicaciones web rápidas y escalables con un solo lenguaje (JavaScript).

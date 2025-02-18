@@ -14,7 +14,7 @@ app.use(express.json()); // Middleware para procesar JSON
 app.use(logger);
 
 // Ruta para registrar usuario
-app.post("/api/usuarios", async (req, res) => {
+app.post("/api/registro", async (req, res) => {
     try {
         const nuevoUsuario = await registrarUsuario(req.body);
         res.status(201).json(nuevoUsuario);

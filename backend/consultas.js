@@ -2,7 +2,7 @@ const { Pool } = require("pg");
 const bcrypt = require("bcryptjs");
 
 const pool = new Pool({
-    user: "tu_usuario",
+    user: "postgres",
     host: "localhost",
     database: "tienda_tecnologica",
     password: "12345",
