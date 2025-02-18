@@ -8,7 +8,7 @@ import { useAuth } from "../context/AuthContext"; // Importa el contexto de aute
 
 const Navegation = () => {
   const { user } = useAuth(); // Obtenemos el usuario autenticado
-
+  console.log("User en Navigation:", user);
   return (
     <Navbar bg="light" expand="lg">
       <Container className="contenedor">

@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
+  
 
   const login = async (email, password) => {
     try {
