@@ -4,12 +4,13 @@ import { useAuth } from "../context/AuthContext";
 const AdminRoute = () => {
   const { user } = useAuth();
 
-  // Si el usuario es administrador, puede acceder a cualquier ruta
-  if (user?.rol === "administrador") {
+  // Convertir user.rol a número si viene como string
+  const userRole = Number(user?.rol);
+
+  if (userRole === 1) {
     return <Outlet />;
   }
 
-  // Si el usuario es cliente, lo redirigimos sin desloguearlo
   return <Navigate to="/" replace />;
 };
 

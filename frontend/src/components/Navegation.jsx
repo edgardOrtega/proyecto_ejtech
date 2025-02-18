@@ -4,11 +4,17 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import logo from "../assets/edpak.png";
 import Logout from "../view/Logout";
-import { useAuth } from "../context/AuthContext"; // Importa el contexto de autenticación
+import { useAuth } from "../context/AuthContext";
 
 const Navegation = () => {
+<<<<<<< HEAD
   const { user } = useAuth(); // Obtenemos el usuario autenticado
   console.log("User en Navigation:", user);
+=======
+  const { user } = useAuth();
+  const userRole = Number(user?.rol);
+
+>>>>>>> 9316185efbe57d4369e1cd72388f80d326fdaf40
   return (
     <Navbar bg="light" expand="lg">
       <Container className="contenedor">
@@ -18,37 +24,30 @@ const Navegation = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
-            {/* Enlaces públicos (para todos) */}
             <Nav.Link as={NavLink} to="/" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Home</Nav.Link>
             {!user && <Nav.Link as={NavLink} to="/Register" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Registro</Nav.Link>}
             {!user && <Nav.Link as={NavLink} to="/Login" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Inicio sesión</Nav.Link>}
 
-            {/* Enlaces para usuario autenticado */}
             {user && (
               <>
                 <Nav.Link as={NavLink} to="/Profile" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Mi perfil</Nav.Link>
                 <Nav.Link as={NavLink} to="/Galeria" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Galería</Nav.Link>
 
-                {/* Enlaces solo para ADMINISTRADOR */}
-                {user.rol == "1" && (
+                {userRole === 1 && (
                   <>
                     <Nav.Link as={NavLink} to="/ListarUsuarios" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Listar Usuarios</Nav.Link>
-                    <Nav.Link as={NavLink} to="/ListarProductos" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Listar Producto</Nav.Link>
+                    <Nav.Link as={NavLink} to="/ListarProductos" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Listar Productos</Nav.Link>
                     <Nav.Link as={NavLink} to="/CrearProducto" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Crear Producto</Nav.Link>
-                    <Nav.Link as={NavLink} to="/Carrito" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Carrito</Nav.Link>
-                    <Nav.Link as={NavLink} to="/Historial" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Historial</Nav.Link>
                   </>
                 )}
 
-                {/* Enlaces solo para CLIENTE */}
-                {user.rol == "2" && (
+                {userRole === 2 && (
                   <>
                     <Nav.Link as={NavLink} to="/Carrito" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Carrito</Nav.Link>
                     <Nav.Link as={NavLink} to="/Historial" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Historial</Nav.Link>
                   </>
                 )}
 
-                {/* Botón de Cerrar Sesión */}
                 <Logout />
               </>
             )}

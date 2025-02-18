@@ -4,12 +4,13 @@ import { useAuth } from "../context/AuthContext";
 const ClientRoute = () => {
   const { user } = useAuth();
 
-  // Si el usuario es cliente o administrador, puede acceder a las rutas de cliente
-  if (user?.rol === "cliente" || user?.rol === "administrador") {
+  // Convertir user.rol a número si viene como string
+  const userRole = Number(user?.rol);
+
+  if (userRole === 1 || userRole === 2) {
     return <Outlet />;
   }
 
-  // Si no está autenticado, lo redirigimos a Home
   return <Navigate to="/" replace />;
 };
 
