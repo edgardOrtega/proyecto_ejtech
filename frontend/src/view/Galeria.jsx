@@ -1,27 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button, Spinner, Alert, InputGroup, FormControl } from "react-bootstrap";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 import Swal from "sweetalert2";
 
-const Galeria = ({ actualizarStock, stockDisponible }) => {
+const Galeria = () => {
+  const { user } = useAuth();
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { addToCart } = useCart();
+  const { fetchCart } = useCart();
   const [quantities, setQuantities] = useState({});
 
-  // Cargar productos desde JSON
   useEffect(() => {
-    fetch("/data/tecnologia.json")
+    fetch("http://localhost:3000/api/productos")
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          const productosConID = data.map((producto, index) => ({
-            ...producto,
-            id: index + 1,
-          }));
-          setProductos(productosConID);
-          setQuantities(productosConID.reduce((acc, producto) => ({ ...acc, [producto.id]: 1 }), {}));
+          setProductos(data);
+          setQuantities(data.reduce((acc, producto) => ({ ...acc, [producto.id_producto]: 1 }), {}));
         } else {
           setError("Los datos no tienen el formato esperado.");
         }
@@ -33,35 +30,45 @@ const Galeria = ({ actualizarStock, stockDisponible }) => {
       });
   }, []);
 
-  //  Función para formatear CLP sin decimales
-  const formatoCLP = (valor) => `$${Number(valor).toLocaleString("es-CL", { minimumFractionDigits: 0 })}`;
+  // 🔹 Función para formatear CLP con separadores de miles
+  const formatoCLP = (valor) => {
+    return `$${Number(valor).toLocaleString("es-CL")}`;
+  };
 
-  // Agregar producto al carrito
-  const handleAddToCart = (product) => {
-    const quantity = quantities[product.id];
-    const stockRestante = stockDisponible[product.id] ?? product.stock;
-
-    if (quantity > stockRestante) {
-      Swal.fire({
-        title: "Error",
-        text: "No hay suficiente stock disponible",
-        icon: "error",
-        timer: 1500,
-        showConfirmButton: false,
-      });
+  const handleAddToCart = async (product) => {
+    if (!user) {
+      Swal.fire("Error", "Debes iniciar sesión para agregar productos al carrito", "error");
       return;
     }
 
-    addToCart({ ...product, quantity });
-    actualizarStock(product.id, -quantity);
+    try {
+      const response = await fetch("http://localhost:3000/api/carrito", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          id_producto: product.id_producto,
+          cantidad: quantities[product.id_producto],
+        }),
+      });
 
-    Swal.fire({
-      title: "Producto añadido",
-      text: `${quantity} x ${product.name} agregado al carrito`,
-      icon: "success",
-      timer: 1500,
-      showConfirmButton: false,
-    });
+      if (!response.ok) throw new Error("No se pudo agregar el producto al carrito");
+
+      Swal.fire({
+        title: "Producto añadido",
+        text: `${quantities[product.id_producto]} x ${product.nombre} agregado al carrito`,
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
+      fetchCart();
+
+    } catch (error) {
+      Swal.fire("Error", "No se pudo agregar el producto al carrito", "error");
+    }
   };
 
   return (
@@ -74,47 +81,41 @@ const Galeria = ({ actualizarStock, stockDisponible }) => {
       <Row className="justify-content-center">
         {!loading &&
           !error &&
-          productos.map((product) => {
-            const stockRestante = stockDisponible[product.id] ?? product.stock;
+          productos.map((product) => (
+            <Col key={product.id_producto} md={4} lg={3} className="mb-4">
+              <Card className="shadow-sm p-3 rounded text-center" style={{ border: "3px solid yellow" }}>
+                <Card.Img variant="top" src={product.imagen} alt={product.nombre} style={{ height: "200px", objectFit: "contain" }} />
+                <Card.Body>
+                  <Card.Title className="fw-bold">{product.nombre}</Card.Title>
+                  <Card.Text className="text-muted">{product.descripcion}</Card.Text>
+                  <p className="fw-bold">Precio: {formatoCLP(product.precio)}</p> {/* 🔹 Precio con formato CLP */}
+                  <p className={`fw-bold ${product.stock === 0 ? "text-danger" : ""}`}>Stock: {product.stock}</p>
 
-            return (
-              <Col key={product.id} md={4} lg={3} className="mb-4">
-                <Card className="shadow-sm p-3 rounded text-center" style={{ border: "3px solid yellow" }}>
-                  <Card.Img variant="top" src={product.image} alt={product.name} style={{ height: "200px", objectFit: "contain" }} />
-                  <Card.Body>
-                    <Card.Title className="fw-bold">{product.name}</Card.Title>
-                    <Card.Text className="text-muted">{product.description}</Card.Text>
-                    <p className="fw-bold">Precio: {formatoCLP(product.price)}</p>
-                    <p className={`fw-bold ${stockRestante === 0 ? "text-danger" : ""}`}>
-                      Stock: {stockRestante}
-                    </p>
-
-                    <InputGroup className="mb-3 justify-content-center">
-                      <Button 
-                        variant="outline-dark" 
-                        onClick={() => setQuantities((prev) => ({ ...prev, [product.id]: Math.max(1, prev[product.id] - 1) }))}
-                        disabled={quantities[product.id] <= 1}
-                      >
-                        -
-                      </Button>
-                      <FormControl className="text-center" readOnly value={quantities[product.id]} />
-                      <Button 
-                        variant="outline-dark" 
-                        onClick={() => setQuantities((prev) => ({ ...prev, [product.id]: prev[product.id] + 1 }))}
-                        disabled={quantities[product.id] >= stockRestante}
-                      >
-                        +
-                      </Button>
-                    </InputGroup>
-
-                    <Button variant="dark" onClick={() => handleAddToCart(product)} disabled={stockRestante === 0}>
-                      {stockRestante === 0 ? "Sin Stock" : "Añadir al Carrito"}
+                  <InputGroup className="mb-3 justify-content-center">
+                    <Button 
+                      variant="outline-dark" 
+                      onClick={() => setQuantities((prev) => ({ ...prev, [product.id_producto]: Math.max(1, prev[product.id_producto] - 1) }))}
+                      disabled={quantities[product.id_producto] <= 1}
+                    >
+                      -
                     </Button>
-                  </Card.Body>
-                </Card>
-              </Col>
-            );
-          })}
+                    <FormControl className="text-center" readOnly value={quantities[product.id_producto]} />
+                    <Button 
+                      variant="outline-dark" 
+                      onClick={() => setQuantities((prev) => ({ ...prev, [product.id_producto]: prev[product.id_producto] + 1 }))}
+                      disabled={quantities[product.id_producto] >= product.stock}
+                    >
+                      +
+                    </Button>
+                  </InputGroup>
+
+                  <Button variant="dark" onClick={() => handleAddToCart(product)} disabled={product.stock === 0}>
+                    {product.stock === 0 ? "Sin Stock" : "Añadir al Carrito"}
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
       </Row>
     </Container>
   );
