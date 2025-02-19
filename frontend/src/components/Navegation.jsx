@@ -31,24 +31,35 @@ const Navegation = () => {
               <>
                 <Nav.Link 
                   as={NavLink} 
+                  to="/Login" 
+                  className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
+                >
+                  Inicio sesión
+                </Nav.Link>
+
+                <Nav.Link 
+                  as={NavLink} 
                   to="/Register" 
                   className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
                 >
                   Registro
                 </Nav.Link>
 
-                <Nav.Link 
-                  as={NavLink} 
-                  to="/Login" 
-                  className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
-                >
-                  Inicio sesión
-                </Nav.Link>
+                
               </>
             )}
 
 {user && (
   <>
+    {/* 🔹 Nueva opción "Perfil" agregada */}
+    <Nav.Link 
+      as={NavLink} 
+      to="/Profile" 
+      className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
+    >
+      Perfil
+    </Nav.Link>
+
     {/* Siempre visibles para usuarios autenticados */}
     <Nav.Link 
       as={NavLink} 
@@ -56,15 +67,6 @@ const Navegation = () => {
       className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
     >
       Galería
-    </Nav.Link>
-
-    {/* 🔹 Nueva opción "Perfil" agregada */}
-    <Nav.Link 
-      as={NavLink} 
-      to="/Perfil" 
-      className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
-    >
-      Perfil
     </Nav.Link>
 
     {(userRole === 1 || userRole === 2) && (
