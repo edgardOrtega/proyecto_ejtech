@@ -12,14 +12,19 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  const ROLES = {
+    1: "Administrador",
+    2: "Cliente",
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const result = await login(email, password);
-
+  
     if (result.success) {
       Swal.fire({
         title: `¡Bienvenido!`,
-        text: `Tu rol es: ${result.rol}`,
+        text: `Tu rol es: ${ROLES[result.rol] || "Desconocido"}`, // 🔥 Mapear ID a nombre
         icon: "success",
         confirmButtonText: "Continuar",
         timer: 2000,

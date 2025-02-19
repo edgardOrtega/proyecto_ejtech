@@ -58,6 +58,15 @@ const Navegation = () => {
       Galería
     </Nav.Link>
 
+    {/* 🔹 Nueva opción "Perfil" agregada */}
+    <Nav.Link 
+      as={NavLink} 
+      to="/Perfil" 
+      className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
+    >
+      Perfil
+    </Nav.Link>
+
     {(userRole === 1 || userRole === 2) && (
       <>
         <Nav.Link 
@@ -108,8 +117,9 @@ const Navegation = () => {
     )}
 
     <Logout />
-              </>
-            )}
+  </>
+)}
+
           </Nav>
         </Navbar.Collapse>
       </Container>

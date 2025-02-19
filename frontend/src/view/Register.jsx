@@ -1,22 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Button, InputGroup, Card } from "react-bootstrap";
 import { FaEye } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const [roles, setRoles] = useState([]); // 🔹 Estado para guardar los roles obtenidos del backend
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
     fecha_nacimiento: "",
-    id_rol: 1, // Por defecto, cliente
+    id_rol: "", // 🔹 Ahora el id_rol será seleccionado por el usuario
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  // 🔹 Obtener roles del backend al cargar el componente
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/roles");
+        const data = await response.json();
+        setRoles(data);
+      } catch (error) {
+        console.error("Error al obtener roles:", error);
+      }
+    };
+    fetchRoles();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,22 +49,18 @@ const Register = () => {
       const response = await fetch("http://localhost:3000/api/registro", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-          fecha_nacimiento: formData.fecha_nacimiento,
-          id_rol: formData.id_rol,
-        }),
+        body: JSON.stringify(formData),
       });
-      
+
       if (!response.ok) {
         throw new Error("Error al registrar usuario");
       }
 
-      const data = await response.json();
-      Swal.fire({ title: "Registro exitoso", text: "Usuario creado correctamente", icon: "success" })
-        .then(() => navigate("/login"));
+      Swal.fire({
+        title: "Registro exitoso",
+        text: "Usuario creado correctamente",
+        icon: "success",
+      }).then(() => navigate("/login"));
     } catch (error) {
       setError("Hubo un error en el registro");
     }
@@ -94,6 +105,19 @@ const Register = () => {
                   <FaEye />
                 </Button>
               </InputGroup>
+            </Form.Group>
+
+            {/* 🔹 Selector de roles */}
+            <Form.Group className="mb-3">
+              <Form.Label>Selecciona tu Rol</Form.Label>
+              <Form.Select name="id_rol" required onChange={handleChange}>
+                <option value="">Selecciona un rol</option>
+                {roles.map((rol) => (
+                  <option key={rol.id_rol} value={rol.id_rol}>
+                    {rol.nombre}
+                  </option>
+                ))}
+              </Form.Select>
             </Form.Group>
 
             {error && <p className="text-danger">{error}</p>}

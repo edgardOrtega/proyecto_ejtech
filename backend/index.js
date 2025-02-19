@@ -30,6 +30,17 @@ const verificarToken = (req, res, next) => {
     });
 };
 
+// RUTA: Obtener roles
+app.get("/api/roles", async (req, res) => {
+    try {
+        const result = await pool.query("SELECT id_rol, nombre FROM rol ORDER BY id_rol ASC");
+        res.json(result.rows);
+    } catch (error) {
+        console.error("🚨 Error al obtener roles:", error);
+        res.status(500).json({ error: "Error en el servidor" });
+    }
+});
+
 // ✅ RUTA: Registrar Usuario
 app.post("/api/registro", async (req, res) => {
     try {
@@ -52,25 +63,55 @@ app.post("/api/registro", async (req, res) => {
 app.post("/api/login", async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await pool.query("SELECT * FROM usuario WHERE email = $1", [email]);
 
-        if (user.rowCount === 0) return res.status(404).json({ error: "Usuario no encontrado" });
+        // Buscar usuario y obtener también el nombre del rol
+        const userResult = await pool.query(
+            `SELECT u.id_usuario, u.email, u.password, u.id_rol, r.nombre AS nombre_rol 
+             FROM usuario u 
+             JOIN rol r ON u.id_rol = r.id_rol 
+             WHERE u.email = $1`,
+            [email]
+        );
 
-        const validPassword = await bcrypt.compare(password, user.rows[0].password);
-        if (!validPassword) return res.status(401).json({ error: "Credenciales incorrectas" });
+        if (userResult.rowCount === 0) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
 
+        const user = userResult.rows[0];
+
+        // Verificar la contraseña
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) {
+            return res.status(401).json({ error: "Credenciales incorrectas" });
+        }
+
+        // Generar token con JWT incluyendo el nombre del rol
         const token = jwt.sign(
-            { id_usuario: user.rows[0].id_usuario, email: user.rows[0].email, id_rol: user.rows[0].id_rol },
+            {
+                id_usuario: user.id_usuario,
+                email: user.email,
+                id_rol: user.id_rol,
+                nombre_rol: user.nombre_rol // 🔥 Ahora el token también tiene el nombre del rol
+            },
             process.env.SECRET_KEY,
             { expiresIn: "2h" }
         );
 
-        res.json({ success: true, token, rol: user.rows[0].id_rol });
+        // Responder con éxito y enviar el nombre del rol
+        res.json({
+            success: true,
+            token,
+            rol: user.id_rol,
+            nombre_rol: user.nombre_rol // 🔥 Ahora enviamos el nombre del rol en la respuesta
+        });
+
     } catch (error) {
         console.error("🚨 Error en /api/login:", error);
         res.status(500).json({ error: "Error en el servidor" });
     }
 });
+
+
 
 // ✅ RUTA: Obtener todos los productos
 app.get("/api/productos", async (req, res) => {
