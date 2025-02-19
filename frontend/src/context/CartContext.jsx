@@ -86,10 +86,9 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // ✅ Eliminar un producto del carrito
   const removeFromCart = async (productId) => {
     if (!user) return;
-
+  
     try {
       const response = await fetch(`http://localhost:3000/api/carrito/${productId}`, {
         method: "DELETE",
@@ -97,15 +96,16 @@ export const CartProvider = ({ children }) => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
+  
       if (!response.ok) throw new Error("Error al eliminar el producto del carrito");
-
-      // Recargar el carrito después de eliminar un producto
-      fetchCart();
+  
+      // 🔹 Recargar el carrito desde la base de datos tras la eliminación
+      await fetchCart();
     } catch (error) {
       console.error("Error al eliminar el producto del carrito:", error);
     }
   };
+  
 
   // ✅ Vaciar el carrito (Eliminar todos los productos del carrito)
   const clearCart = async () => {

@@ -75,7 +75,7 @@ app.post("/api/login", async (req, res) => {
 // ✅ RUTA: Obtener todos los productos
 app.get("/api/productos", async (req, res) => {
     try {
-        const { rows } = await pool.query("SELECT * FROM producto");
+        const { rows } = await pool.query("SELECT * FROM producto ORDER BY id_producto ASC");
         res.json(rows);
     } catch (error) {
         console.error("🚨 Error en /api/productos:", error);
@@ -166,34 +166,93 @@ app.get("/api/ordenes", verificarToken, async (req, res) => {
     }
 });
 
-// ✅ RUTA: Generar orden de compra
 app.post("/api/orden", verificarToken, async (req, res) => {
+    const client = await pool.connect();
     try {
+        await client.query("BEGIN"); // 🔹 Iniciar transacción
+        
         const id_usuario = req.user.id_usuario;
         const { total, productos } = req.body;
 
-        const ordenResult = await pool.query(
+        // 🔹 Insertar la orden en la base de datos y obtener su ID
+        const { rows } = await client.query(
             "INSERT INTO orden (id_usuario, total) VALUES ($1, $2) RETURNING id_orden",
             [id_usuario, total]
         );
+        const id_orden = rows[0].id_orden;
 
-        const id_orden = ordenResult.rows[0].id_orden;
+        // 🔹 Actualizar stock y verificar que todos los productos tengan stock suficiente
+        const ids_productos = productos.map(p => p.id_producto);
+        const cantidades = productos.map(p => p.cantidad);
 
-        for (const producto of productos) {
-            await pool.query(
-                "INSERT INTO detalle_orden (id_orden, id_producto, cantidad, subtotal) VALUES ($1, $2, $3, $4)",
-                [id_orden, producto.id_producto, producto.cantidad, producto.precio * producto.cantidad]
-            );
+        const updateStockQuery = `
+            UPDATE producto 
+            SET stock = stock - c.cantidad
+            FROM (SELECT UNNEST($1::int[]) AS id_producto, UNNEST($2::int[]) AS cantidad) AS c
+            WHERE producto.id_producto = c.id_producto
+            AND producto.stock >= c.cantidad
+            RETURNING producto.id_producto, producto.stock;
+        `;
+
+        const stockResult = await client.query(updateStockQuery, [ids_productos, cantidades]);
+
+        if (stockResult.rows.length !== productos.length) {
+            throw new Error("Stock insuficiente o error en la actualización de stock.");
         }
 
-        await pool.query("DELETE FROM carrito WHERE id_usuario = $1", [id_usuario]);
+
+        // 🔹 Insertar detalles de la orden en una sola consulta
+        const insertDetalleOrdenQuery = `
+            INSERT INTO detalle_orden (id_orden, id_producto, cantidad, subtotal)
+            SELECT $1, UNNEST($2::int[]), UNNEST($3::int[]), UNNEST($4::numeric[])
+        `;
+
+        const subtotales = productos.map(p => p.cantidad * p.precio);
+        await client.query(insertDetalleOrdenQuery, [id_orden, ids_productos, cantidades, subtotales]);
+
+        // 🔹 Vaciar el carrito del usuario
+        await client.query("DELETE FROM carrito WHERE id_usuario = $1", [id_usuario]);
+
+        await client.query("COMMIT"); // 🔹 Confirmar la transacción
 
         res.json({ success: true, message: "Orden creada con éxito", id_orden });
+
     } catch (error) {
+        await client.query("ROLLBACK"); // 🔹 Revertir cambios si hay un error
         console.error("🚨 Error en /api/orden:", error);
+        res.status(500).json({ error: error.message });
+    } finally {
+        client.release(); // 🔹 Liberar la conexión
+    }
+});
+
+
+
+
+
+
+app.delete("/api/carrito/:id_producto", verificarToken, async (req, res) => {
+    try {
+        const { id_producto } = req.params;
+        const id_usuario = req.user.id_usuario;
+
+        // 🔹 Verificar si el producto existe en el carrito antes de eliminarlo
+        const result = await pool.query(
+            "DELETE FROM carrito WHERE id_usuario = $1 AND id_producto = $2 RETURNING *",
+            [id_usuario, id_producto]
+        );
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: "El producto no está en el carrito o ya fue eliminado" });
+        }
+
+        res.json({ success: true, message: "Producto eliminado del carrito correctamente" });
+    } catch (error) {
+        console.error("🚨 Error en DELETE /api/carrito/:id_producto:", error);
         res.status(500).json({ error: error.message });
     }
 });
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

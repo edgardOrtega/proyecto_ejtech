@@ -19,31 +19,95 @@ const Navegation = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
-            <Nav.Link as={NavLink} to="/" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Home</Nav.Link>
-            {!user && <Nav.Link as={NavLink} to="/Register" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Registro</Nav.Link>}
-            {!user && <Nav.Link as={NavLink} to="/Login" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Inicio sesión</Nav.Link>}
+            <Nav.Link 
+              as={NavLink} 
+              to="/" 
+              className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
+            >
+              Home
+            </Nav.Link>
 
-            {user && (
+            {!user && (
               <>
-                <Nav.Link as={NavLink} to="/Profile" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Mi perfil</Nav.Link>
-                <Nav.Link as={NavLink} to="/Galeria" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Galería</Nav.Link>
+                <Nav.Link 
+                  as={NavLink} 
+                  to="/Register" 
+                  className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
+                >
+                  Registro
+                </Nav.Link>
 
-                {userRole === 1 && (
-                  <>
-                    <Nav.Link as={NavLink} to="/ListarUsuarios" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Listar Usuarios</Nav.Link>
-                    <Nav.Link as={NavLink} to="/ListarProductos" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Listar Productos</Nav.Link>
-                    <Nav.Link as={NavLink} to="/CrearProducto" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Crear Producto</Nav.Link>
-                  </>
-                )}
+                <Nav.Link 
+                  as={NavLink} 
+                  to="/Login" 
+                  className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
+                >
+                  Inicio sesión
+                </Nav.Link>
+              </>
+            )}
 
-                {userRole === 2 && (
-                  <>
-                    <Nav.Link as={NavLink} to="/Carrito" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Carrito</Nav.Link>
-                    <Nav.Link as={NavLink} to="/Historial" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>Historial</Nav.Link>
-                  </>
-                )}
+{user && (
+  <>
+    {/* Siempre visibles para usuarios autenticados */}
+    <Nav.Link 
+      as={NavLink} 
+      to="/Galeria" 
+      className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
+    >
+      Galería
+    </Nav.Link>
 
-                <Logout />
+    {(userRole === 1 || userRole === 2) && (
+      <>
+        <Nav.Link 
+          as={NavLink} 
+          to="/Carrito" 
+          className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
+        >
+          Carrito
+        </Nav.Link>
+
+        <Nav.Link 
+          as={NavLink} 
+          to="/Historial" 
+          className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
+        >
+          Historial
+        </Nav.Link>
+      </>
+    )}
+
+    {/* Opciones solo para ADMIN (userRole === 1) */}
+    {userRole === 1 && (
+      <>
+        <Nav.Link 
+          as={NavLink} 
+          to="/ListarUsuarios" 
+          className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
+        >
+          Listar Usuarios
+        </Nav.Link>
+
+        <Nav.Link 
+          as={NavLink} 
+          to="/ListarProductos" 
+          className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
+        >
+          Listar Productos
+        </Nav.Link>
+
+        <Nav.Link 
+          as={NavLink} 
+          to="/CrearProducto" 
+          className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
+        >
+          Crear Producto
+        </Nav.Link>
+      </>
+    )}
+
+    <Logout />
               </>
             )}
           </Nav>

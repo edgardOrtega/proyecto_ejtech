@@ -53,29 +53,32 @@ const Carrito = () => {
     const total = cart.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
 
     try {
-      const response = await fetch("http://localhost:3000/api/orden", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ total, productos: cart }),
-      });
+        const response = await fetch("http://localhost:3000/api/orden", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({ total, productos: cart }),
+        });
 
-      if (!response.ok) throw new Error("Error al procesar la compra");
+        if (!response.ok) throw new Error("Error al procesar la compra");
 
-      Swal.fire({
-        title: "Compra exitosa",
-        text: "Tu compra ha sido registrada correctamente",
-        icon: "success",
-      }).then(() => {
-        setCart([]);
-        navigate("/historial");
-      });
+        Swal.fire({
+            title: "Compra exitosa",
+            text: "Tu compra ha sido registrada correctamente",
+            icon: "success",
+        }).then(() => {
+            setCart([]); // ✅ Vaciar el carrito en el frontend
+            fetchCart(); // ✅ Recargar el carrito
+            fetchProductos(); // ✅ Recargar los productos para ver el stock actualizado
+        });
+
     } catch (error) {
-      Swal.fire("Error", "No se pudo procesar la compra", "error");
+        Swal.fire("Error", "No se pudo procesar la compra", "error");
     }
-  };
+};
+
 
   return (
     <Container className="mt-5 text-center">
