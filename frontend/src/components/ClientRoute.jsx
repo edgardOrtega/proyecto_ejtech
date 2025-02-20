@@ -2,16 +2,18 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const ClientRoute = () => {
-  const { user } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
 
-  // Convertir user.rol a número si viene como string
-  const userRole = Number(user?.rol);
-
-  if (userRole === 1 || userRole === 2) {
-    return <Outlet />;
+  if (loading) {
+    return <div>Cargando...</div>;
   }
 
-  return <Navigate to="/" replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/Login" replace />;
+  }
+
+  const userRole = Number(user?.rol);
+  return userRole === 1 || userRole === 2 ? <Outlet /> : <Navigate to="/" replace />;
 };
 
 export default ClientRoute;

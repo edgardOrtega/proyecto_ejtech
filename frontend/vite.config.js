@@ -7,10 +7,9 @@ export default defineConfig({
     watch: {
       usePolling: true,
     },
-    historyApiFallback: true, // 🔥 Evita errores 404 en recargas de páginas dentro de React
+    historyApiFallback: true,  // ✅ Asegura que las rutas funcionen en recargas
   },
   build: {
-    outDir: "dist",
     target: "esnext",
   },
 });

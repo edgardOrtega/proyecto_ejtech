@@ -12,14 +12,14 @@ import CrearProducto from "./view/CrearProducto";
 import Galeria from "./view/Galeria";
 import Carrito from "./view/Carrito";
 import Historial from "./view/Historial"; 
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import ClientRoute from "./components/ClientRoute";
 import EditarUsuario from "./view/EditarUsuario";
 import EditarProducto from "./view/EditarProducto";
-import Error404 from "./view/Error404"; // Importamos la nueva página 404
+import Error404 from "./view/Error404";
+import GuestRoute from "./components/GuestRoute";
 
 function App() {
   const [productos, setProductos] = useState([]);
@@ -71,18 +71,22 @@ function App() {
       <Routes>
         {/* Rutas públicas */}
         <Route path="/" element={<Home />} />
-        <Route path="/Register" element={<Register />} />
-        <Route path="/Login" element={<Login />} />
 
-        {/* Rutas accesibles por CLIENTES y ADMINISTRADORES */}
+        {/* 🔹 Solo accesibles para usuarios NO logueados */}
+        <Route element={<GuestRoute />}>
+          <Route path="/Login" element={<Login />} />
+          <Route path="/Register" element={<Register />} />
+        </Route>
+
+        {/* 🔹 Rutas accesibles para clientes y administradores */}
         <Route element={<ClientRoute />}>
           <Route path="/Profile" element={<Profile />} />
-          <Route path="/Galeria" element={<Galeria actualizarStock={actualizarStock} stockDisponible={stockDisponible} />} />
-          <Route path="/Carrito" element={<Carrito actualizarStock={actualizarStock} />} />
+          <Route path="/Galeria" element={<Galeria />} />
+          <Route path="/Carrito" element={<Carrito />} />
           <Route path="/Historial" element={<Historial />} />
         </Route>
 
-        {/* Rutas accesibles SOLO por ADMINISTRADORES */}
+        {/* 🔹 Rutas exclusivas para administradores */}
         <Route element={<AdminRoute />}>
           <Route path="/ListarUsuarios" element={<ListarUsuarios />} />
           <Route path="/ListarProductos" element={<ListarProductos />} />
@@ -91,7 +95,7 @@ function App() {
           <Route path="/EditarUsuario/:id" element={<EditarUsuario />} />
         </Route>
 
-        {/* Página de error 404 */}
+        {/* Página 404 */}
         <Route path="*" element={<Error404 />} />
       </Routes>
     </AuthProvider>

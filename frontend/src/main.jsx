@@ -9,7 +9,7 @@ import { HistoryProvider } from "./context/HistoryContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter basename="/">
+    <BrowserRouter> {/* 📌 Eliminamos `basename="/"` porque no es necesario */}
       <AuthProvider>  
         <CartProvider>  
           <HistoryProvider>  

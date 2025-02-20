@@ -1,10 +1,11 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const logger = require("./middlewares/logger");
 
 const app = express();
-app.use(logger); 
+app.use(logger);
 app.use(cors());
 app.use(express.json());
 
@@ -21,6 +22,14 @@ app.use("/api", userRoutes);
 app.use("/api", productRoutes);
 app.use("/api", cartRoutes);
 app.use("/api", orderRoutes);
+
+// 🔹 Servir archivos estáticos de React (asegúrate de que el frontend está en "frontend/dist")
+app.use(express.static(path.join(__dirname, "frontend", "dist")));
+
+// 🔹 Redirigir todas las rutas desconocidas al index.html de React
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+});
 
 // 🔹 Iniciar el servidor
 const PORT = process.env.PORT || 3000;
