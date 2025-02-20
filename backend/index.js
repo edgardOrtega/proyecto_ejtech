@@ -64,7 +64,7 @@ app.post("/api/login", async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Buscar usuario y obtener también el nombre del rol
+        // 🔹 Buscar usuario y obtener también el nombre del rol
         const userResult = await pool.query(
             `SELECT u.id_usuario, u.email, u.password, u.id_rol, r.nombre AS nombre_rol 
              FROM usuario u 
@@ -79,30 +79,32 @@ app.post("/api/login", async (req, res) => {
 
         const user = userResult.rows[0];
 
-        // Verificar la contraseña
+        // 🔹 Verificar la contraseña
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
             return res.status(401).json({ error: "Credenciales incorrectas" });
         }
 
-        // Generar token con JWT incluyendo el nombre del rol
+        // 🔹 Generar token con JWT incluyendo el nombre del rol
         const token = jwt.sign(
             {
                 id_usuario: user.id_usuario,
                 email: user.email,
                 id_rol: user.id_rol,
-                nombre_rol: user.nombre_rol // 🔥 Ahora el token también tiene el nombre del rol
+                nombre_rol: user.nombre_rol?.trim() || "Usuario", // ✅ Evita valores nulos
             },
             process.env.SECRET_KEY,
             { expiresIn: "2h" }
         );
 
-        // Responder con éxito y enviar el nombre del rol
+        // 🔹 Responder con éxito y enviar el nombre del rol
         res.json({
             success: true,
             token,
+            id_usuario: user.id_usuario,
+            email: user.email,
             rol: user.id_rol,
-            nombre_rol: user.nombre_rol // 🔥 Ahora enviamos el nombre del rol en la respuesta
+            nombre_rol: user.nombre_rol?.trim() || "Usuario" // ✅ Evita que sea `undefined`
         });
 
     } catch (error) {
@@ -110,6 +112,7 @@ app.post("/api/login", async (req, res) => {
         res.status(500).json({ error: "Error en el servidor" });
     }
 });
+
 
 
 
@@ -124,41 +127,82 @@ app.get("/api/productos", async (req, res) => {
     }
 });
 
-// ✅ RUTA: Agregar productos al carrito
+// ✅ RUTA: Agregar productos al carrito con mensaje claro de stock
 app.post("/api/carrito", verificarToken, async (req, res) => {
     try {
         const { id_producto, cantidad } = req.body;
         const id_usuario = req.user.id_usuario;
 
+        // 🔹 Obtener el stock disponible del producto
         const productoExistente = await pool.query("SELECT stock FROM producto WHERE id_producto = $1", [id_producto]);
-        if (productoExistente.rowCount === 0) return res.status(400).json({ error: "El producto no existe." });
+        if (productoExistente.rowCount === 0) {
+            return res.status(400).json({ error: "El producto no existe." });
+        }
 
         const stockDisponible = productoExistente.rows[0].stock;
-        if (cantidad > stockDisponible) return res.status(400).json({ error: "Stock insuficiente." });
 
+        // 🔹 Obtener la cantidad actual en el carrito del usuario
         const checkCart = await pool.query(
             "SELECT cantidad FROM carrito WHERE id_usuario = $1 AND id_producto = $2",
             [id_usuario, id_producto]
         );
 
+        const cantidadEnCarrito = checkCart.rowCount > 0 ? checkCart.rows[0].cantidad : 0;
+        const nuevaCantidadTotal = cantidadEnCarrito + cantidad;
+
+        // 🚨 **Verificar que la cantidad total en el carrito no supere el stock**
+        if (nuevaCantidadTotal > stockDisponible) {
+            return res.status(400).json({
+                error: `No puedes agregar ${cantidad} unidades. Actualmente tienes ${cantidadEnCarrito} en el carrito y el stock disponible es ${stockDisponible}.`,
+            });
+        }
+
+        // 🔹 Si el producto ya está en el carrito, actualizar la cantidad
         if (checkCart.rowCount > 0) {
             await pool.query(
                 "UPDATE carrito SET cantidad = cantidad + $1 WHERE id_usuario = $2 AND id_producto = $3",
                 [cantidad, id_usuario, id_producto]
             );
         } else {
+            // 🔹 Si no está en el carrito, insertarlo
             await pool.query(
                 "INSERT INTO carrito (id_usuario, id_producto, cantidad) VALUES ($1, $2, $3)",
                 [id_usuario, id_producto, cantidad]
             );
         }
 
-        res.json({ success: true, message: "Producto agregado al carrito" });
+        res.json({ success: true, message: "Producto agregado al carrito correctamente" });
+
     } catch (error) {
         console.error("🚨 Error en /api/carrito:", error);
         res.status(500).json({ error: error.message });
     }
 });
+
+
+
+// ✅ RUTA: Vaciar carrito del usuario
+app.delete("/api/carrito", verificarToken, async (req, res) => {
+    try {
+        const id_usuario = req.user.id_usuario;
+
+        // 🔹 Verificar si el usuario tiene productos en el carrito antes de eliminar
+        const checkCart = await pool.query("SELECT * FROM carrito WHERE id_usuario = $1", [id_usuario]);
+
+        if (checkCart.rowCount === 0) {
+            return res.status(404).json({ error: "El carrito ya está vacío." });
+        }
+
+        // 🔹 Eliminar todos los productos del carrito del usuario autenticado
+        await pool.query("DELETE FROM carrito WHERE id_usuario = $1", [id_usuario]);
+
+        res.json({ success: true, message: "Carrito vaciado correctamente" });
+    } catch (error) {
+        console.error("🚨 Error en DELETE /api/carrito:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 // ✅ RUTA: Obtener el carrito del usuario
 app.get("/api/carrito", verificarToken, async (req, res) => {
@@ -181,7 +225,7 @@ app.get("/api/carrito", verificarToken, async (req, res) => {
 // ✅ RUTA: Obtener historial de órdenes del usuario
 app.get("/api/ordenes", verificarToken, async (req, res) => {
     try {
-        const id_usuario = req.user.id_usuario;
+        const id_usuario = req.user.id_usuario; // 🔹 Filtrar por usuario autenticado
 
         const { rows } = await pool.query(
             `SELECT o.id_orden, o.fecha, o.total, o.estado, 
@@ -196,7 +240,8 @@ app.get("/api/ordenes", verificarToken, async (req, res) => {
              JOIN detalle_orden d ON o.id_orden = d.id_orden
              JOIN producto p ON d.id_producto = p.id_producto
              WHERE o.id_usuario = $1
-             GROUP BY o.id_orden`,
+             GROUP BY o.id_orden
+             ORDER BY o.fecha DESC`, // 🔹 Ordenar por fecha descendente
             [id_usuario]
         );
 
@@ -207,22 +252,23 @@ app.get("/api/ordenes", verificarToken, async (req, res) => {
     }
 });
 
+// ✅ RUTA: Crear una nueva orden de compra
 app.post("/api/orden", verificarToken, async (req, res) => {
     const client = await pool.connect();
     try {
         await client.query("BEGIN"); // 🔹 Iniciar transacción
-        
+
         const id_usuario = req.user.id_usuario;
         const { total, productos } = req.body;
 
-        // 🔹 Insertar la orden en la base de datos y obtener su ID
+        // 🔹 Insertar la orden y obtener el ID generado
         const { rows } = await client.query(
             "INSERT INTO orden (id_usuario, total) VALUES ($1, $2) RETURNING id_orden",
             [id_usuario, total]
         );
         const id_orden = rows[0].id_orden;
 
-        // 🔹 Actualizar stock y verificar que todos los productos tengan stock suficiente
+        // 🔹 Verificar stock y actualizarlo antes de confirmar la compra
         const ids_productos = productos.map(p => p.id_producto);
         const cantidades = productos.map(p => p.cantidad);
 
@@ -241,8 +287,7 @@ app.post("/api/orden", verificarToken, async (req, res) => {
             throw new Error("Stock insuficiente o error en la actualización de stock.");
         }
 
-
-        // 🔹 Insertar detalles de la orden en una sola consulta
+        // 🔹 Insertar detalles de la orden
         const insertDetalleOrdenQuery = `
             INSERT INTO detalle_orden (id_orden, id_producto, cantidad, subtotal)
             SELECT $1, UNNEST($2::int[]), UNNEST($3::int[]), UNNEST($4::numeric[])
@@ -251,7 +296,7 @@ app.post("/api/orden", verificarToken, async (req, res) => {
         const subtotales = productos.map(p => p.cantidad * p.precio);
         await client.query(insertDetalleOrdenQuery, [id_orden, ids_productos, cantidades, subtotales]);
 
-        // 🔹 Vaciar el carrito del usuario
+        // 🔹 Vaciar el carrito después de la compra
         await client.query("DELETE FROM carrito WHERE id_usuario = $1", [id_usuario]);
 
         await client.query("COMMIT"); // 🔹 Confirmar la transacción
@@ -266,11 +311,6 @@ app.post("/api/orden", verificarToken, async (req, res) => {
         client.release(); // 🔹 Liberar la conexión
     }
 });
-
-
-
-
-
 
 app.delete("/api/carrito/:id_producto", verificarToken, async (req, res) => {
     try {

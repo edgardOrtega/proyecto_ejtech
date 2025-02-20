@@ -109,3 +109,13 @@
   font-weight: bold;
   border-radius: 12px;
 }
+
+.boton-comprar, .boton-vaciar {
+  margin-bottom: 40px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.rol-navbar {
+  transform: scale(0.7);
+}

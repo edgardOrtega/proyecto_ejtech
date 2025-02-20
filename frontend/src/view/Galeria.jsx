@@ -10,9 +10,11 @@ const Galeria = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { fetchCart } = useCart();
-  const [quantities, setQuantities] = useState({});
+  const [carrito, setCarrito] = useState({}); // 🔹 Estado para almacenar productos en el carrito
+  const [quantities, setQuantities] = useState({}); // 🔹 Estado para manejar cantidades seleccionadas
 
   useEffect(() => {
+    // 🔹 Obtener productos de la API
     fetch("http://localhost:3000/api/productos")
       .then((res) => res.json())
       .then((data) => {
@@ -28,13 +30,29 @@ const Galeria = () => {
         setError("No se pudieron cargar los productos.");
         setLoading(false);
       });
-  }, []);
 
-  // 🔹 Función para formatear CLP con separadores de miles
-  const formatoCLP = (valor) => {
-    return `$${Number(valor).toLocaleString("es-CL")}`;
+    // 🔹 Obtener el carrito si el usuario está autenticado
+    if (user) {
+      fetch("http://localhost:3000/api/carrito", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          const cartMap = {};
+          data.forEach((item) => {
+            cartMap[item.id_producto] = item.cantidad;
+          });
+          setCarrito(cartMap);
+        });
+    }
+  }, [user]);
+
+  // 🔹 Obtener el stock visual (restando la cantidad en el carrito)
+  const getStockVisual = (product) => {
+    return product.stock - (carrito[product.id_producto] || 0);
   };
 
+  // 🔹 Función para añadir productos al carrito
   const handleAddToCart = async (product) => {
     if (!user) {
       Swal.fire("Error", "Debes iniciar sesión para agregar productos al carrito", "error");
@@ -54,7 +72,11 @@ const Galeria = () => {
         }),
       });
 
-      if (!response.ok) throw new Error("No se pudo agregar el producto al carrito");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "No se pudo agregar el producto al carrito");
+      }
 
       Swal.fire({
         title: "Producto añadido",
@@ -64,11 +86,27 @@ const Galeria = () => {
         showConfirmButton: false,
       });
 
-      fetchCart();
+      fetchCart(); // ✅ Actualiza el carrito en el contexto global
+      
+      // ✅ También actualiza el stock visual en el estado local
+      setCarrito((prev) => ({
+        ...prev,
+        [product.id_producto]: (prev[product.id_producto] || 0) + quantities[product.id_producto],
+      }));
 
     } catch (error) {
-      Swal.fire("Error", "No se pudo agregar el producto al carrito", "error");
+      Swal.fire({
+        title: "¡Límite de stock alcanzado!",
+        text: error.message,
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
     }
+  };
+
+  // 🔹 Función para formatear CLP con separadores de miles
+  const formatoCLP = (valor) => {
+    return `$${Number(valor).toLocaleString("es-CL")}`;
   };
 
   return (
@@ -89,7 +127,11 @@ const Galeria = () => {
                   <Card.Title className="fw-bold">{product.nombre}</Card.Title>
                   <Card.Text className="text-muted">{product.descripcion}</Card.Text>
                   <p className="fw-bold">Precio: {formatoCLP(product.precio)}</p> {/* 🔹 Precio con formato CLP */}
-                  <p className={`fw-bold ${product.stock === 0 ? "text-danger" : ""}`}>Stock: {product.stock}</p>
+
+                  {/* 🔹 Stock visual dinámico (sin afectar la BD) */}
+                  <p className={`fw-bold ${getStockVisual(product) === 0 ? "text-danger" : ""}`}>
+                    Stock: {getStockVisual(product)}
+                  </p>
 
                   <InputGroup className="mb-3 justify-content-center">
                     <Button 
@@ -103,14 +145,14 @@ const Galeria = () => {
                     <Button 
                       variant="outline-dark" 
                       onClick={() => setQuantities((prev) => ({ ...prev, [product.id_producto]: prev[product.id_producto] + 1 }))}
-                      disabled={quantities[product.id_producto] >= product.stock}
+                      disabled={quantities[product.id_producto] >= getStockVisual(product)}
                     >
                       +
                     </Button>
                   </InputGroup>
 
-                  <Button variant="dark" onClick={() => handleAddToCart(product)} disabled={product.stock === 0}>
-                    {product.stock === 0 ? "Sin Stock" : "Añadir al Carrito"}
+                  <Button variant="dark" onClick={() => handleAddToCart(product)} disabled={getStockVisual(product) === 0}>
+                    {getStockVisual(product) === 0 ? "Sin Stock" : "Añadir al Carrito"}
                   </Button>
                 </Card.Body>
               </Card>

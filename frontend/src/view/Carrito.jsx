@@ -47,6 +47,27 @@ const Carrito = () => {
     }
   };
 
+  const handleClearCart = async () => {
+    try {
+        const response = await fetch("http://localhost:3000/api/carrito", {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "No se pudo vaciar el carrito");
+        }
+
+        setCart([]); // ✅ Vaciar el carrito en el frontend inmediatamente
+        Swal.fire("Carrito vaciado", "Todos los productos han sido eliminados", "success");
+    } catch (error) {
+        Swal.fire("Error", error.message, "error");
+    }
+};
+
+
   const handlePurchase = async () => {
     if (cart.length === 0) return;
 
@@ -119,17 +140,22 @@ const Carrito = () => {
 
           <Row className="mt-4">
             <Col>
-              <h4 className="fw-bold text-primary">
+              <h4 className="fw-bold text-success">
                 Total: {formatoCLP(cart.reduce((total, product) => total + product.precio * product.cantidad, 0))}
               </h4>
             </Col>
           </Row>
 
           <div className="text-center mt-4">
-            <Button variant="success" className="ms-3" onClick={handlePurchase}>
-              Comprar
+            <Button variant="secondary" className="boton-vaciar" onClick={handleClearCart}>
+                Vaciar Carrito
+            </Button>
+
+            <Button variant="success" className="boton-comprar" onClick={handlePurchase}>
+                Comprar
             </Button>
           </div>
+
         </>
       ) : (
         <h5 className="text-center mt-4">No hay productos en el carrito</h5>

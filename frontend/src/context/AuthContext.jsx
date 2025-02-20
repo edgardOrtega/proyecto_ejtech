@@ -9,7 +9,10 @@ export const AuthProvider = ({ children }) => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
       const parsedUser = JSON.parse(savedUser);
-      setUser({ ...parsedUser, rol: Number(parsedUser.rol) }); // Convertir rol a número
+      setUser({
+        ...parsedUser,
+        rol: Number(parsedUser.rol), // 🔹 Convertir rol a número
+      });
     }
   }, []);
 
@@ -27,7 +30,15 @@ export const AuthProvider = ({ children }) => {
         throw new Error(data.error || "Error al iniciar sesión");
       }
 
-      const userData = { email, rol: Number(data.rol) }; // Convertir rol a número
+      // 🔹 Crear objeto con toda la información del usuario
+      const userData = {
+        id_usuario: data.id_usuario,
+        email: data.email,
+        rol: Number(data.rol), // 🔹 Convertir rol a número
+        nombre_rol: data.nombre_rol?.trim() || "Usuario", // 🔹 Evitar valores nulos
+      };
+
+      // 🔹 Guardar en localStorage para mantener la sesión
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
