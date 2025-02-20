@@ -38,18 +38,18 @@ const Navegation = () => {
               <>
                 <Nav.Link 
                   as={NavLink} 
-                  to="/Login" 
-                  className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
-                >
-                  Inicio sesión
-                </Nav.Link>
-
-                <Nav.Link 
-                  as={NavLink} 
                   to="/Register" 
                   className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
                 >
                   Registro
+                </Nav.Link>
+
+                <Nav.Link 
+                  as={NavLink} 
+                  to="/Login" 
+                  className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
+                >
+                  Inicio sesión
                 </Nav.Link>
               </>
             ) : (

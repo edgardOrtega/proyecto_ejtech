@@ -10,11 +10,10 @@ const Galeria = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { fetchCart } = useCart();
-  const [carrito, setCarrito] = useState({}); // 🔹 Estado para almacenar productos en el carrito
-  const [quantities, setQuantities] = useState({}); // 🔹 Estado para manejar cantidades seleccionadas
-
+  const [carrito, setCarrito] = useState({});
+  const [quantities, setQuantities] = useState({});
+  
   useEffect(() => {
-    // 🔹 Obtener productos de la API
     fetch("http://localhost:3000/api/productos")
       .then((res) => res.json())
       .then((data) => {
@@ -31,7 +30,6 @@ const Galeria = () => {
         setLoading(false);
       });
 
-    // 🔹 Obtener el carrito si el usuario está autenticado
     if (user) {
       fetch("http://localhost:3000/api/carrito", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -47,18 +45,11 @@ const Galeria = () => {
     }
   }, [user]);
 
-  // 🔹 Obtener el stock visual (restando la cantidad en el carrito)
   const getStockVisual = (product) => {
     return product.stock - (carrito[product.id_producto] || 0);
   };
 
-  // 🔹 Función para añadir productos al carrito
   const handleAddToCart = async (product) => {
-    if (!user) {
-      Swal.fire("Error", "Debes iniciar sesión para agregar productos al carrito", "error");
-      return;
-    }
-
     try {
       const response = await fetch("http://localhost:3000/api/carrito", {
         method: "POST",
@@ -71,13 +62,9 @@ const Galeria = () => {
           cantidad: quantities[product.id_producto],
         }),
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "No se pudo agregar el producto al carrito");
-      }
-
+  
+      if (!response.ok) throw new Error("No se pudo agregar el producto al carrito");
+  
       Swal.fire({
         title: "Producto añadido",
         text: `${quantities[product.id_producto]} x ${product.nombre} agregado al carrito`,
@@ -85,26 +72,21 @@ const Galeria = () => {
         timer: 1500,
         showConfirmButton: false,
       });
-
-      fetchCart(); // ✅ Actualiza el carrito en el contexto global
-      
-      // ✅ También actualiza el stock visual en el estado local
-      setCarrito((prev) => ({
-        ...prev,
-        [product.id_producto]: (prev[product.id_producto] || 0) + quantities[product.id_producto],
+  
+      // ✅ Actualizar el estado inmediatamente sin recargar la vista
+      setCarrito((prevCarrito) => ({
+        ...prevCarrito,
+        [product.id_producto]: (prevCarrito[product.id_producto] || 0) + quantities[product.id_producto],
       }));
-
+  
+      fetchCart(); // ✅ También actualiza el carrito globalmente
+  
     } catch (error) {
-      Swal.fire({
-        title: "¡Límite de stock alcanzado!",
-        text: error.message,
-        icon: "warning",
-        confirmButtonText: "OK",
-      });
+      Swal.fire("Error", error.message, "error");
     }
   };
+  
 
-  // 🔹 Función para formatear CLP con separadores de miles
   const formatoCLP = (valor) => {
     return `$${Number(valor).toLocaleString("es-CL")}`;
   };
@@ -119,45 +101,59 @@ const Galeria = () => {
       <Row className="justify-content-center">
         {!loading &&
           !error &&
-          productos.map((product) => (
-            <Col key={product.id_producto} md={4} lg={3} className="mb-4">
-              <Card className="shadow-sm p-3 rounded text-center" style={{ border: "3px solid yellow" }}>
-                <Card.Img variant="top" src={product.imagen} alt={product.nombre} style={{ height: "200px", objectFit: "contain" }} />
-                <Card.Body>
-                  <Card.Title className="fw-bold">{product.nombre}</Card.Title>
-                  <Card.Text className="text-muted">{product.descripcion}</Card.Text>
-                  <p className="fw-bold">Precio: {formatoCLP(product.precio)}</p> {/* 🔹 Precio con formato CLP */}
+          productos.map((product) => {
+            const cantidadEnCarrito = carrito[product.id_producto] || 0;
+            const stockVisual = getStockVisual(product);
 
-                  {/* 🔹 Stock visual dinámico (sin afectar la BD) */}
-                  <p className={`fw-bold ${getStockVisual(product) === 0 ? "text-danger" : ""}`}>
-                    Stock: {getStockVisual(product)}
-                  </p>
+            return (
+              <Col key={product.id_producto} md={4} lg={3} className="mb-4">
+                <Card className="shadow-sm p-3 rounded text-center" style={{ border: "3px solid yellow" }}>
+                  <Card.Img variant="top" src={product.imagen} alt={product.nombre} style={{ height: "200px", objectFit: "contain" }} />
+                  <Card.Body>
+                    <Card.Title className="fw-bold">{product.nombre}</Card.Title>
+                    <Card.Text className="text-muted">{product.descripcion}</Card.Text>
+                    <p className="fw-bold">Precio: {formatoCLP(product.precio)}</p>
 
-                  <InputGroup className="mb-3 justify-content-center">
-                    <Button 
-                      variant="outline-dark" 
-                      onClick={() => setQuantities((prev) => ({ ...prev, [product.id_producto]: Math.max(1, prev[product.id_producto] - 1) }))}
-                      disabled={quantities[product.id_producto] <= 1}
+                    <p className={`fw-bold ${stockVisual === 0 ? "text-danger" : ""}`}>
+                      Stock: {stockVisual}
+                    </p>
+
+                    <InputGroup className="mb-3 justify-content-center">
+                      <Button 
+                        variant="outline-dark" 
+                        onClick={() => setQuantities((prev) => ({ ...prev, [product.id_producto]: Math.max(1, prev[product.id_producto] - 1) }))}
+                        disabled={quantities[product.id_producto] <= 1}
+                      >
+                        -
+                      </Button>
+                      <FormControl className="text-center" readOnly value={quantities[product.id_producto]} />
+                      <Button 
+                        variant="outline-dark" 
+                        onClick={() => setQuantities((prev) => ({ ...prev, [product.id_producto]: prev[product.id_producto] + 1 }))}
+                        disabled={quantities[product.id_producto] >= stockVisual}
+                      >
+                        +
+                      </Button>
+                    </InputGroup>
+
+                    {/* 🔹 Botón dinámico mostrando "Llevas: X" cuando hay productos en el carrito */}
+                    <Button
+                      variant={cantidadEnCarrito > 0 ? "success" : "dark"}
+                      onClick={() => handleAddToCart(product)}
+                      disabled={stockVisual === 0}
                     >
-                      -
+                      {stockVisual === 0
+                        ? "Sin Stock"
+                        : cantidadEnCarrito > 0
+                        ? `Añadidos: ${cantidadEnCarrito}`
+                        : "Añadir al Carrito"}
                     </Button>
-                    <FormControl className="text-center" readOnly value={quantities[product.id_producto]} />
-                    <Button 
-                      variant="outline-dark" 
-                      onClick={() => setQuantities((prev) => ({ ...prev, [product.id_producto]: prev[product.id_producto] + 1 }))}
-                      disabled={quantities[product.id_producto] >= getStockVisual(product)}
-                    >
-                      +
-                    </Button>
-                  </InputGroup>
 
-                  <Button variant="dark" onClick={() => handleAddToCart(product)} disabled={getStockVisual(product) === 0}>
-                    {getStockVisual(product) === 0 ? "Sin Stock" : "Añadir al Carrito"}
-                  </Button>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
+                  </Card.Body>
+                </Card>
+              </Col>
+            );
+          })}
       </Row>
     </Container>
   );
