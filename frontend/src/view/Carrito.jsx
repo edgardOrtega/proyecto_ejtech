@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Button, Container, Row, Col, Spinner, Alert } from "react-bootstrap";
+import { Button, Container, Row, Col, Spinner, Alert, InputGroup, FormControl } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom"; // 🚀 Importa el hook de navegación
+
 
 const Carrito = () => {
   const { user } = useAuth();
+  const navigate = useNavigate(); // 🚀 Instancia de `navigate`
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!user) return;
@@ -33,6 +34,7 @@ const Carrito = () => {
     return `$${Number(valor).toLocaleString("es-CL")}`;
   };
 
+  // 🔹 Función para eliminar un producto
   const handleRemove = async (id_producto) => {
     try {
       await fetch(`http://localhost:3000/api/carrito/${id_producto}`, {
@@ -47,38 +49,93 @@ const Carrito = () => {
     }
   };
 
-  const handlePurchase = async () => {
-    if (cart.length === 0) return;
+  // 🔹 Función para vaciar todo el carrito
+  const handleClearCart = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/api/carrito", {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
 
-    const total = cart.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "No se pudo vaciar el carrito");
+      }
+
+      setCart([]); // ✅ Vaciar el carrito en el frontend inmediatamente
+      Swal.fire("Carrito vaciado", "Todos los productos han sido eliminados", "success");
+    } catch (error) {
+      Swal.fire("Error", error.message, "error");
+    }
+  };
+
+  // 🔹 Función para actualizar la cantidad de un producto en el carrito
+  const handleUpdateQuantity = async (id_producto, newQuantity, stockDisponible) => {
+    if (newQuantity < 1 || newQuantity > stockDisponible) return;
 
     try {
-        const response = await fetch("http://localhost:3000/api/orden", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            body: JSON.stringify({ total, productos: cart }),
-        });
+      const response = await fetch("http://localhost:3000/api/carrito", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ id_producto, cantidad: newQuantity }),
+      });
 
-        if (!response.ok) throw new Error("Error al procesar la compra");
+      if (!response.ok) {
+        throw new Error("No se pudo actualizar la cantidad");
+      }
 
-        Swal.fire({
-            title: "Compra exitosa",
-            text: "Tu compra ha sido registrada correctamente",
-            icon: "success",
-        }).then(() => {
-            setCart([]); // ✅ Vaciar el carrito en el frontend
-            fetchCart(); // ✅ Recargar el carrito
-            fetchProductos(); // ✅ Recargar los productos para ver el stock actualizado
-        });
-
+      // ✅ Actualizar la cantidad en el estado del carrito
+      setCart((prevCart) =>
+        prevCart.map((item) =>
+          item.id_producto === id_producto ? { ...item, cantidad: newQuantity } : item
+        )
+      );
     } catch (error) {
-        Swal.fire("Error", "No se pudo procesar la compra", "error");
+      Swal.fire("Error", "No se pudo actualizar la cantidad", "error");
     }
-};
+  };
 
+  const handlePurchase = async () => {
+    if (cart.length === 0) {
+      Swal.fire("Error", "No hay productos en el carrito", "error");
+      return;
+    }
+  
+    const total = cart.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+  
+    try {
+      const response = await fetch("http://localhost:3000/api/orden", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ total, productos: cart }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.error || "No se pudo procesar la compra");
+      }
+  
+      Swal.fire({
+        title: "Compra exitosa",
+        text: "Tu compra ha sido registrada correctamente",
+        icon: "success",
+      }).then(() => {
+        setCart([]); // ✅ Vaciar el carrito en el frontend
+        navigate("/Historial"); // 🚀 Redirigir al historial de compras
+      });
+  
+    } catch (error) {
+      Swal.fire("Error", error.message, "error");
+    }
+  };  
 
   return (
     <Container className="mt-5 text-center">
@@ -90,46 +147,64 @@ const Carrito = () => {
         <Alert variant="danger">{error}</Alert>
       ) : cart.length > 0 ? (
         <>
-          {cart.map((product) => {
-            const subtotal = product.precio * product.cantidad;
+          {cart.map((product) => (
+            <Row key={product.id_producto} className="my-3 mx-auto p-3 shadow-sm rounded-3"
+              style={{ border: "3px solid yellow", maxWidth: "750px" }}>
+              <Col md={2} className="text-center">
+                <img src={product.imagen} alt={product.nombre} className="img-fluid" style={{ maxWidth: "100px" }} />
+              </Col>
 
-            return (
-              <Row key={product.id_producto} className="my-3 mx-auto p-3 shadow-sm rounded-3"
-                style={{ border: "3px solid yellow", maxWidth: "750px" }}>
-                <Col md={2} className="text-center">
-                  <img src={product.imagen} alt={product.nombre} className="img-fluid" style={{ maxWidth: "100px" }} />
-                </Col>
+              <Col md={4}>
+                <h5 className="fw-bold">{product.nombre.toUpperCase()}</h5>
+                <p><strong>Precio unitario:</strong> {formatoCLP(product.precio)}</p>
+                <p className="fw-bold text-success">Subtotal: {formatoCLP(product.precio * product.cantidad)}</p>
+              </Col>
 
-                <Col md={4}>
-                  <h5 className="fw-bold">{product.nombre.toUpperCase()}</h5>
-                  <p><strong>Precio unitario:</strong> {formatoCLP(product.precio)}</p>
-                  <p className="fw-bold text-success">Subtotal: {formatoCLP(subtotal)}</p>
-                </Col>
+              {/* 🔹 Botones para modificar cantidad */}
+              <Col md={3} className="text-center">
+                <InputGroup>
+                  <Button
+                    variant="outline-secondary"
+                    onClick={() => handleUpdateQuantity(product.id_producto, product.cantidad - 1, product.stock)}
+                    disabled={product.cantidad <= 1}
+                  >
+                    -
+                  </Button>
+                  <FormControl className="text-center" value={product.cantidad} readOnly />
+                  <Button
+                    variant="outline-secondary"
+                    onClick={() => handleUpdateQuantity(product.id_producto, product.cantidad + 1, product.stock)}
+                    disabled={product.cantidad >= product.stock}
+                  >
+                    +
+                  </Button>
+                </InputGroup>
+              </Col>
 
-                <Col md={3} className="text-center">
-                  <p className="fw-bold">Cantidad: {product.cantidad}</p>
-                </Col>
-
-                <Col md={3} className="text-center">
-                  <Button variant="danger" onClick={() => handleRemove(product.id_producto)}>Eliminar</Button>
-                </Col>
-              </Row>
-            );
-          })}
+              <Col md={3} className="text-center">
+                <Button variant="danger" onClick={() => handleRemove(product.id_producto)}>Eliminar</Button>
+              </Col>
+            </Row>
+          ))}
 
           <Row className="mt-4">
             <Col>
-              <h4 className="fw-bold text-primary">
+              <h4 className="fw-bold text-success">
                 Total: {formatoCLP(cart.reduce((total, product) => total + product.precio * product.cantidad, 0))}
               </h4>
             </Col>
           </Row>
 
           <div className="text-center mt-4">
-            <Button variant="success" className="ms-3" onClick={handlePurchase}>
+            <Button variant="secondary" className="boton-vaciar" onClick={handleClearCart}>
+              Vaciar Carrito
+            </Button>
+
+            <Button variant="success" className="boton-comprar" onClick={handlePurchase}>
               Comprar
             </Button>
           </div>
+
         </>
       ) : (
         <h5 className="text-center mt-4">No hay productos en el carrito</h5>

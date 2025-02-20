@@ -4,13 +4,16 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // 🔹 Nuevo estado para evitar redirecciones incorrectas
 
   useEffect(() => {
+    // 🔹 Intentar recuperar el usuario desde localStorage
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
       const parsedUser = JSON.parse(savedUser);
       setUser({ ...parsedUser, rol: Number(parsedUser.rol) }); // Convertir rol a número
     }
+    setLoading(false); // 🔹 Marcar que la carga ha terminado
   }, []);
 
   const login = async (email, password) => {
@@ -27,7 +30,7 @@ export const AuthProvider = ({ children }) => {
         throw new Error(data.error || "Error al iniciar sesión");
       }
 
-      const userData = { email, rol: Number(data.rol) }; // Convertir rol a número
+      const userData = { email, rol: Number(data.rol) };
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
@@ -45,7 +48,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
