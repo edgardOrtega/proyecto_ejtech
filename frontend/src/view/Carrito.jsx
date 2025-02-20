@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Button, Container, Row, Col, Spinner, Alert, InputGroup, FormControl } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom"; // 🚀 Importa el hook de navegación
+
 
 const Carrito = () => {
   const { user } = useAuth();
+  const navigate = useNavigate(); // 🚀 Instancia de `navigate`
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -96,6 +99,44 @@ const Carrito = () => {
     }
   };
 
+  const handlePurchase = async () => {
+    if (cart.length === 0) {
+      Swal.fire("Error", "No hay productos en el carrito", "error");
+      return;
+    }
+  
+    const total = cart.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+  
+    try {
+      const response = await fetch("http://localhost:3000/api/orden", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ total, productos: cart }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.error || "No se pudo procesar la compra");
+      }
+  
+      Swal.fire({
+        title: "Compra exitosa",
+        text: "Tu compra ha sido registrada correctamente",
+        icon: "success",
+      }).then(() => {
+        setCart([]); // ✅ Vaciar el carrito en el frontend
+        navigate("/Historial"); // 🚀 Redirigir al historial de compras
+      });
+  
+    } catch (error) {
+      Swal.fire("Error", error.message, "error");
+    }
+  };  
+
   return (
     <Container className="mt-5 text-center">
       <h2 className="fw-bold mb-4">LISTADO DEL CARRITO</h2>
@@ -159,7 +200,7 @@ const Carrito = () => {
               Vaciar Carrito
             </Button>
 
-            <Button variant="success" className="boton-comprar">
+            <Button variant="success" className="boton-comprar" onClick={handlePurchase}>
               Comprar
             </Button>
           </div>

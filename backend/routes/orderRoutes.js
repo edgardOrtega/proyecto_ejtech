@@ -24,7 +24,7 @@ router.get("/ordenes", verificarToken, async (req, res) => {
              JOIN producto p ON d.id_producto = p.id_producto
              WHERE o.id_usuario = $1
              GROUP BY o.id_orden
-             ORDER BY o.fecha DESC`,
+             ORDER BY o.fecha ASC`,
             [id_usuario]
         );
 
