@@ -3,14 +3,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Form, Button, Card, InputGroup } from "react-bootstrap";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Importamos los iconos
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-const JSON_FILE = "/data/listadoUsuarios.json";
+const API_URL = "http://localhost:3000/editarUsuario:"; // URL base de tu API
 
 const EditarUsuario = () => {
   const { id } = useParams(); 
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false); // Estado para mostrar/ocultar la contraseña
+  const [showPassword, setShowPassword] = useState(false); 
   const [userData, setUserData] = useState({
     userName: "",
     Email: "",
@@ -19,28 +19,24 @@ const EditarUsuario = () => {
     Activo: false,
   });
 
+  // Obtener usuario de la API
   useEffect(() => {
+    if (!id) return;
+  
     const fetchUser = async () => {
       try {
-        const response = await axios.get(JSON_FILE);
-        const users = response.data;
-  
-        const foundUser = users.find(user => user.id === id); // Buscar usuario por ID
-  
-        if (foundUser) {
-          setUserData(foundUser);
-        } else {
-          Swal.fire("Error", "Usuario no encontrado", "error");
-          navigate("/listar-usuarios");
-        }
+        const response = await axios.get(`${API_URL}/${id}`);
+        setUserData(response.data);
       } catch (error) {
-        console.error("Error al obtener usuario:", error);
+        Swal.fire("Error", "Usuario no encontrado", "error");
+        navigate("/ListarUsuarios");
       }
     };
   
     fetchUser();
   }, [id, navigate]);
-
+  
+  // Manejar cambios en los inputs
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setUserData({
@@ -49,15 +45,21 @@ const EditarUsuario = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  // Enviar cambios al backend
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    Swal.fire("Guardado", "Los cambios se han guardado correctamente", "success");
-    navigate("/ListarUsuarios");
+    try {
+      await axios.put(`${API_URL}/${id}`, userData);
+      Swal.fire("Guardado", "Los cambios se han guardado correctamente", "success");
+      navigate("/listar-usuarios");
+    } catch (error) {
+      Swal.fire("Error", "No se pudo actualizar el usuario", "error");
+    }
   };
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
-      <Card style={{ width: "400px",backgroundColor: "#FFFF00", padding: "20px", borderRadius: "15px" }}>
+      <Card style={{ width: "400px", backgroundColor: "#FFFF00", padding: "20px", borderRadius: "15px" }}>
         <Card.Body>
           <Card.Title className="text-center fw-bold">Editar Usuario</Card.Title>
           <Form onSubmit={handleSubmit}>

@@ -1,6 +1,6 @@
 const express = require("express");
 const pool = require("../db");
-const verificarToken = require("../authMiddleware");
+const verificarToken = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 

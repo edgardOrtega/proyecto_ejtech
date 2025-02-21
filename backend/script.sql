@@ -23,13 +23,6 @@ CREATE TABLE usuario (
 -- Insertar 2 roles
 INSERT INTO rol (nombre) VALUES ('Administrador'), ('Cliente');
 
--- Insertar 4 usuarios 2 de administrador y 2 de cliente
-INSERT INTO usuario (username, email, password, fecha_nacimiento, id_rol) VALUES 
-('admin1', 'admin1@example.com', 'hashed_password_1', '1990-05-10', 1),
-('admin2', 'admin2@example.com', 'hashed_password_2', '1985-08-15', 1),
-('cliente1', 'cliente1@example.com', 'hashed_password_3', '2000-03-22', 2),
-('cliente2', 'cliente2@example.com', 'hashed_password_4', '1998-11-30', 2);
-
 -- Crear Tabla: categoria
 CREATE TABLE categoria (
     id_categoria SERIAL PRIMARY KEY,

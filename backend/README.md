@@ -31,9 +31,12 @@
 ```
 Proyecto_EDPAK/backend
 │── middlewares/
-│   │  
-│   │  
-│   │ 
+│── routes/
+    │── authRoutes.js
+    │── cartRoutes.js
+    │── orderRoutes.js
+    │── productRoutes.js
+    │── userRoutes.js  
 │── test/
 │   |── test1.spect.js
 │   ├── test2.spect.js
@@ -41,7 +44,7 @@ Proyecto_EDPAK/backend
 │   ├── test4.spect.js
 │── .env
 │── .gitignore
-├── consultas.js
+├── db.js
 ├── index.js
 ├── package-lock.json
 ├── package.json
