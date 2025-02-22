@@ -92,7 +92,7 @@ function App() {
           <Route path="/ListarProductos" element={<ListarProductos />} />
           <Route path="/CrearProducto" element={<CrearProducto />} />
           <Route path="/EditarProducto/:id" element={<EditarProducto />} />
-          <Route path="/EditarUsuario/:id" element={<EditarUsuario />} />
+          <Route path="/EditarUsuario/:id_usuario" element={<EditarUsuario />} />
         </Route>
 
         {/* Página 404 */}

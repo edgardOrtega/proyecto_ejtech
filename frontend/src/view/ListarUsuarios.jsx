@@ -93,7 +93,6 @@ const ListarUsuarios = () => {
           <tr>
             <th>Username</th>
             <th>Email</th>
-            <th>Password</th>
             <th>Rol</th>
             <th>Activo</th>
             <th>Fecha Creación</th>
@@ -106,7 +105,6 @@ const ListarUsuarios = () => {
             <tr key={user.id}>
               <td>{user.username}</td>
               <td>{user.email}</td>
-              <td>{user.password}</td>
               <td>{user.id_rol}</td>
               <td>{user.activo ? "Sí" : "No"}</td>
               <td>{new Date(user.creado_en).toLocaleDateString()}</td>

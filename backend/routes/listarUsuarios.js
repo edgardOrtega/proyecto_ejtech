@@ -56,7 +56,6 @@ router.delete("/listarUsuarios/:id_usuario", async (req, res) => {
   }
 });
 
-
   router.get("/listarUsuarios/:id", async (req, res) => {
     const { id } = req.params;
     try {

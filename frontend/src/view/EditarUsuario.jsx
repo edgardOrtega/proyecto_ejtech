@@ -1,42 +1,43 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Form, Button, Card, InputGroup } from "react-bootstrap";
 import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
+import { Form, Button, Container } from "react-bootstrap";
 import Swal from "sweetalert2";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-const API_URL = "http://localhost:3000/editarUsuario:"; // URL base de tu API
+const API_URL = "http://localhost:3000/api/listarUsuarios"; // Asegúrate de que sea la URL correcta
 
 const EditarUsuario = () => {
-  const { id } = useParams(); 
+  const { id_usuario } = useParams(); // 👈 Obtener el ID desde la URL
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false); 
   const [userData, setUserData] = useState({
-    userName: "",
-    Email: "",
-    Password: "",
-    Rol: "",
-    Activo: false,
+    username: "",
+    email: "",
+    password: "",
+    id_rol: "",
+    activo: false,
   });
 
-  // Obtener usuario de la API
   useEffect(() => {
-    if (!id) return;
-  
     const fetchUser = async () => {
+      console.log(`🔎 URL de la API: ${API_URL}/${id_usuario}`); // ✅ Verificar en consola
       try {
-        const response = await axios.get(`${API_URL}/${id}`);
+        const response = await axios.get(`${API_URL}/${id_usuario}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("✅ Datos recibidos:", response.data); // ✅ Verificar los datos recibidos
         setUserData(response.data);
       } catch (error) {
+        console.error("❌ Error al obtener usuario:", error.response || error);
         Swal.fire("Error", "Usuario no encontrado", "error");
         navigate("/ListarUsuarios");
       }
     };
   
     fetchUser();
-  }, [id, navigate]);
-  
-  // Manejar cambios en los inputs
+  }, [id_usuario, navigate]);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setUserData({
@@ -45,93 +46,75 @@ const EditarUsuario = () => {
     });
   };
 
-  // Enviar cambios al backend
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    // Preparar el payload solo con los campos necesarios
+    const payload = {
+      username: userData.username,
+      email: userData.email,
+      id_rol: Number(userData.id_rol),
+      activo: userData.activo,
+    };
+  
+    // Si la contraseña no está vacía, incluirla
+    if (userData.password.trim() !== "") {
+      payload.password = userData.password;
+    }
+  
+    console.log("✍ Enviando datos:", payload);
+  
     try {
-      await axios.put(`${API_URL}/${id}`, userData);
-      Swal.fire("Guardado", "Los cambios se han guardado correctamente", "success");
-      navigate("/listar-usuarios");
+      const response = await axios.put(`http://localhost:3000/api/editarUsuario/${id_usuario}`, payload, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+  
+      console.log("✅ Usuario actualizado:", response.data);
+      Swal.fire("Éxito", "Usuario actualizado correctamente", "success");
+      navigate("/ListarUsuarios");
     } catch (error) {
+      console.error("❌ Error al actualizar usuario:", error.response || error);
       Swal.fire("Error", "No se pudo actualizar el usuario", "error");
     }
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100">
-      <Card style={{ width: "400px", backgroundColor: "#FFFF00", padding: "20px", borderRadius: "15px" }}>
-        <Card.Body>
-          <Card.Title className="text-center fw-bold">Editar Usuario</Card.Title>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3">
-              <Form.Label>Nombre de Usuario</Form.Label>
-              <Form.Control 
-                type="text" 
-                name="userName"
-                value={userData.userName} 
-                onChange={handleChange} 
-              />
-            </Form.Group>
+    <Container className="mt-4">
+      <h4 className="text-center">Editar Usuario</h4>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group className="mb-3">
+          <Form.Label>Username</Form.Label>
+          <Form.Control type="text" name="username" value={userData.username} onChange={handleChange} required />
+        </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Email</Form.Label>
-              <Form.Control 
-                type="email" 
-                name="Email"
-                value={userData.Email} 
-                onChange={handleChange} 
-              />
-            </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Email</Form.Label>
+          <Form.Control type="email" name="email" value={userData.email} onChange={handleChange} required />
+        </Form.Group>
 
-            {/* Campo de contraseña con icono de mostrar/ocultar */}
-            <Form.Group className="mb-3">
-              <Form.Label>Password</Form.Label>
-              <InputGroup>
-                <Form.Control
-                  type={showPassword ? "text" : "password"}
-                  name="Password"
-                  value={userData.Password}
-                  onChange={handleChange}
-                />
-                <Button 
-                  variant="outline-secondary"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </Button>
-              </InputGroup>
-            </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Contraseña</Form.Label>
+          <Form.Control type="password" name="password" value={userData.password} onChange={handleChange} />
+        </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Rol</Form.Label>
-              <Form.Control 
-                type="text" 
-                name="Rol"
-                value={userData.Rol} 
-                onChange={handleChange} 
-              />
-            </Form.Group>
+        <Form.Group className="mb-3">
+  <Form.Label>Rol</Form.Label>
+  <Form.Select name="id_rol" value={userData.id_rol} onChange={handleChange} required>
+    <option value="">Selecciona un rol</option>
+    <option value="1">Administrador</option>
+    <option value="2">Cliente</option>
+  </Form.Select>
+</Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Check 
-                type="checkbox" 
-                name="Activo"
-                label="Usuario activo"
-                checked={userData.Activo}
-                onChange={handleChange} 
-              />
-            </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Check type="checkbox" label="Activo" name="activo" checked={userData.activo} onChange={handleChange} />
+        </Form.Group>
 
-            <Button variant="dark" type="submit" className="w-100">
-              Guardar Cambios
-            </Button>
-            <Button variant="secondary" className="w-100 mt-2" onClick={() => navigate("/ListarUsuarios")}>
-              Cancelar
-            </Button>
-          </Form>
-        </Card.Body>
-      </Card>
-    </div>
+        <Button variant="primary" type="submit">
+          Guardar cambios
+        </Button>
+      </Form>
+    </Container>
   );
 };
 

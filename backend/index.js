@@ -17,7 +17,7 @@ const cartRoutes = require("./routes/cartRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const listarUsuarios = require("./routes/listarUsuarios");
 const editarUsuarios = require("./routes/editarUsuario");
-const eliminarUsuario = require("./routes/eliminarUsuario");
+//const eliminarUsuario = require("./routes/eliminarUsuario");
 const categoryRoutes = require("./routes/categoryRoutes");
 
 

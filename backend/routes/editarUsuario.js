@@ -1,6 +1,6 @@
 const express = require("express");
 const pool = require("../db");
-
+const bcrypt = require("bcryptjs");
 const router = express.Router();
 
 // Obtener un usuario por ID
@@ -25,21 +25,40 @@ router.get("/editarUsuario/:id_usuario", async (req, res) => {
 });
 
 // Editar un usuario
-router.put("/EditarUsuario/:id_usuario", async (req, res) => {
+
+
+router.put("/editarUsuario/:id_usuario", async (req, res) => {
     try {
         const id_usuario = parseInt(req.params.id_usuario, 10);
-        const { userName, Email, Password, Rol, Activo } = req.body;
+        let { username, email, password, id_rol, activo } = req.body;
 
         if (isNaN(id_usuario)) {
             return res.status(400).json({ error: "ID de usuario inválido" });
         }
 
+        id_rol = parseInt(id_rol, 10);
+        activo = activo === "true" || activo === true;
+
+        // Verificar si el usuario existe
+        const currentUser = await pool.query("SELECT password FROM usuario WHERE id_usuario = $1", [id_usuario]);
+
+        if (currentUser.rows.length === 0) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        // Si se envía una nueva contraseña, encriptarla; si no, mantener la actual
+        let hashedPassword = currentUser.rows[0].password;
+        if (password && password.trim() !== "") {
+            hashedPassword = await bcrypt.hash(password, 10);
+        }
+
+        // Actualizar el usuario
         const updateQuery = `
-            UPDATE usuarios 
-            SET userName = $1, Email = $2, Password = $3, Rol = $4, Activo = $5 
-            WHERE id = $6 RETURNING *;
+            UPDATE usuario
+            SET username = $1, email = $2, password = $3, id_rol = $4, activo = $5, actualizado_en = NOW()
+            WHERE id_usuario = $6 RETURNING *;
         `;
-        const values = [userName, Email, Password, Rol, Activo, id_usuario];
+        const values = [username, email, hashedPassword, id_rol, activo, id_usuario];
 
         const result = await pool.query(updateQuery, values);
 
@@ -50,7 +69,7 @@ router.put("/EditarUsuario/:id_usuario", async (req, res) => {
         res.json({ message: "Usuario actualizado correctamente", user: result.rows[0] });
     } catch (error) {
         console.error("🚨 Error actualizando usuario:", error);
-        res.status(500).json({ error: "Error interno del servidor" });
+        res.status(500).json({ error: "Error interno del servidor", details: error.message });
     }
 });
 
