@@ -18,6 +18,8 @@ const orderRoutes = require("./routes/orderRoutes");
 const listarUsuarios = require("./routes/listarUsuarios");
 const editarUsuarios = require("./routes/editarUsuario");
 const eliminarUsuario = require("./routes/eliminarUsuario");
+const categoryRoutes = require("./routes/categoryRoutes");
+
 
 // 🔹 Usar las rutas con el prefijo "/api"
 app.use("/api", authRoutes);
@@ -27,6 +29,8 @@ app.use("/api", cartRoutes);
 app.use("/api", orderRoutes);
 app.use("/api", listarUsuarios); 
 app.use("/api", editarUsuarios); 
+app.use("/api", categoryRoutes);
+
 
 // 🔹 Servir archivos estáticos de React (asegúrate de que el frontend está en "frontend/dist")
 app.use(express.static(path.join(__dirname, "frontend", "dist")));
