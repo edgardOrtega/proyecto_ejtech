@@ -18,6 +18,7 @@ const orderRoutes = require("./routes/orderRoutes");
 const listarUsuarios = require("./routes/listarUsuarios");
 const editarUsuarios = require("./routes/editarUsuario");
 //const eliminarUsuario = require("./routes/eliminarUsuario");
+const listarProductos = require("./routes/listarProductos");
 const categoryRoutes = require("./routes/categoryRoutes");
 
 
@@ -27,7 +28,8 @@ app.use("/api", userRoutes);
 app.use("/api", productRoutes);
 app.use("/api", cartRoutes);
 app.use("/api", orderRoutes);
-app.use("/api", listarUsuarios); 
+app.use("/api", listarUsuarios);
+app.use("/api", listarProductos);
 app.use("/api", editarUsuarios); 
 app.use("/api", categoryRoutes);
 

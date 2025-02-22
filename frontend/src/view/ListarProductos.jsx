@@ -4,7 +4,7 @@ import { Table, Button, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const JSON_FILE = "/data/tecnologia.json"; // Ruta del archivo JSON
+const API_URL = "http://localhost:3000/api/listarProductos"; // ✅ URL de la API real
 
 const ListarProductos = () => {
   const [products, setProducts] = useState([]);
@@ -15,7 +15,7 @@ const ListarProductos = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(JSON_FILE);
+        const response = await axios.get(API_URL); // ✅ Cambiamos la URL a la API real
         setProducts(response.data);
       } catch (err) {
         setError("Error al cargar los productos");
@@ -30,7 +30,7 @@ const ListarProductos = () => {
     navigate(`/EditarProducto/${id}`);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     Swal.fire({
       title: "¿Estás seguro?",
       text: "No podrás revertir esto!",
@@ -39,10 +39,22 @@ const ListarProductos = () => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Sí, eliminar!"
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        setProducts(products.filter(product => product.id !== id));
-        Swal.fire("Eliminado!", "El producto ha sido eliminado.", "success");
+        try {
+          // ✅ Enviar solicitud DELETE al backend
+          const response = await axios.delete(`http://localhost:3000/api/eliminarProducto/${id}`);
+  
+          if (response.status === 200) {
+            // 🔥 Eliminar del estado después de confirmación del backend
+            setProducts((prevProducts) => prevProducts.filter(product => product.id_producto !== id));
+  
+            Swal.fire("Eliminado!", "El producto ha sido eliminado.", "success");
+          }
+        } catch (error) {
+          console.error("Error al eliminar:", error);
+          Swal.fire("Error!", "No se pudo eliminar el producto.", "error");
+        }
       }
     });
   };
@@ -66,21 +78,21 @@ const ListarProductos = () => {
           </tr>
         </thead>
         <tbody>
-          {products.map((product, index) => (
-            <tr key={index}>
-              <td>{product.name}</td>
-              <td>{product.description}</td>
-              <td>{product.price}</td>
-              <td>{product.stock}</td>
-              <td>{product.category}</td>
-              <td>
-              <Button variant="warning" size="sm" onClick={() => handleEdit(product.id)}>✏️ Editar</Button>
-              </td>
-              <td>
-              <Button variant="danger" size="sm" onClick={() => handleDelete(product.id)}>🗑️ Eliminar</Button>
-              </td>
-            </tr>
-          ))}
+        {products.map((product) => (
+    <tr key={product.id_producto}> 
+      <td>{product.nombre}</td>
+      <td>{product.descripcion}</td>
+      <td>{product.precio}</td>
+      <td>{product.stock}</td>
+      <td>{product.categoria}</td>  
+      <td>
+        <Button variant="warning" size="sm" onClick={() => handleEdit(product.id_producto)}>✏️ Editar</Button>
+      </td>
+      <td>
+        <Button variant="danger" size="sm" onClick={() => handleDelete(product.id_producto)}>🗑️ Eliminar</Button>
+      </td>
+    </tr>
+  ))}
         </tbody>
       </Table>
     </div>

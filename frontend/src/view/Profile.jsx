@@ -1,40 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Form, Button, Card } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
 
 const Profile = () => {
-  const { user } = useAuth(); // Obtener el usuario autenticado desde el contexto
+  const { user } = useAuth(); // Obtener usuario desde el contexto
+
+  // Inicializar los valores del formulario con los datos del contexto
   const [userData, setUserData] = useState({
-    userName: "",
-    Email: "",
-    Rol: "",
+    userName: user?.username || "", // Asegurar que `user.username` esté disponible
+    email: user?.email || "",
+    rol: user?.rol === 1 ? "Administrador" : "Cliente", // Convertir el rol en texto
   });
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch("/data/listadoUsuarios.json");
-        const users = await response.json();
-
-        // Buscar los datos del usuario autenticado
-        const foundUser = users.find((u) => u.userName === user?.userName);
-
-        if (foundUser) {
-          setUserData({
-            userName: foundUser.userName,
-            Email: foundUser.Email,
-            Rol: foundUser.Rol,
-          });
-        }
-      } catch (error) {
-        console.error("Error al obtener los datos del usuario:", error);
-      }
-    };
-
-    if (user) {
-      fetchUserData();
-    }
-  }, [user]);
 
   // Manejar cambios en los inputs
   const handleChange = (e) => {
@@ -46,7 +22,7 @@ const Profile = () => {
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
-      <Card style={{ width: "350px",backgroundColor: "#FFFF00", padding: "20px", borderRadius: "15px" }}>
+      <Card style={{ width: "350px", backgroundColor: "#FFFF00", padding: "20px", borderRadius: "15px" }}>
         <Card.Body>
           <Card.Title className="text-center fw-bold">Perfil de Usuario</Card.Title>
           <Form>
@@ -55,8 +31,9 @@ const Profile = () => {
               <Form.Control 
                 type="text" 
                 name="userName"
-                value={userData.userName} 
+                value={userData.username} 
                 onChange={handleChange} 
+                disabled // Deshabilitado si no se quiere editar
               />
             </Form.Group>
 
@@ -64,9 +41,10 @@ const Profile = () => {
               <Form.Label>Email</Form.Label>
               <Form.Control 
                 type="email" 
-                name="Email"
-                value={userData.Email} 
+                name="email"
+                value={userData.email} 
                 onChange={handleChange} 
+                disabled
               />
             </Form.Group>
 
@@ -74,9 +52,10 @@ const Profile = () => {
               <Form.Label>Rol</Form.Label>
               <Form.Control 
                 type="text" 
-                name="Rol"
-                value={userData.Rol} 
+                name="rol"
+                value={userData.rol} 
                 onChange={handleChange} 
+                disabled
               />
             </Form.Group>
 
