@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Button, Container, Row, Col, Spinner, Alert, InputGroup, FormControl } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom"; // 🚀 Importa el hook de navegación
-
+import { useNavigate } from "react-router-dom"; 
 
 const Carrito = () => {
   const { user } = useAuth();
-  const navigate = useNavigate(); // 🚀 Instancia de `navigate`
+  const navigate = useNavigate(); 
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,12 +28,10 @@ const Carrito = () => {
       });
   }, [user]);
 
-  // 🔹 Formato de CLP con separadores de miles
   const formatoCLP = (valor) => {
     return `$${Number(valor).toLocaleString("es-CL")}`;
   };
 
-  // 🔹 Función para eliminar un producto
   const handleRemove = async (id_producto) => {
     try {
       await fetch(`http://localhost:3000/api/carrito/${id_producto}`, {
@@ -49,8 +46,20 @@ const Carrito = () => {
     }
   };
 
-  // 🔹 Función para vaciar todo el carrito
   const handleClearCart = async () => {
+    const confirmacion = await Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Se eliminarán todos los productos del carrito",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, vaciar carrito",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!confirmacion.isConfirmed) return;
+
     try {
       const response = await fetch("http://localhost:3000/api/carrito", {
         method: "DELETE",
@@ -63,14 +72,13 @@ const Carrito = () => {
         throw new Error(data.error || "No se pudo vaciar el carrito");
       }
 
-      setCart([]); // ✅ Vaciar el carrito en el frontend inmediatamente
+      setCart([]); 
       Swal.fire("Carrito vaciado", "Todos los productos han sido eliminados", "success");
     } catch (error) {
       Swal.fire("Error", error.message, "error");
     }
   };
 
-  // 🔹 Función para actualizar la cantidad de un producto en el carrito
   const handleUpdateQuantity = async (id_producto, newQuantity, stockDisponible) => {
     if (newQuantity < 1 || newQuantity > stockDisponible) return;
 
@@ -88,7 +96,6 @@ const Carrito = () => {
         throw new Error("No se pudo actualizar la cantidad");
       }
 
-      // ✅ Actualizar la cantidad en el estado del carrito
       setCart((prevCart) =>
         prevCart.map((item) =>
           item.id_producto === id_producto ? { ...item, cantidad: newQuantity } : item
@@ -128,8 +135,8 @@ const Carrito = () => {
         text: "Tu compra ha sido registrada correctamente",
         icon: "success",
       }).then(() => {
-        setCart([]); // ✅ Vaciar el carrito en el frontend
-        navigate("/Historial"); // 🚀 Redirigir al historial de compras
+        setCart([]);
+        navigate("/Historial"); 
       });
   
     } catch (error) {
@@ -160,7 +167,6 @@ const Carrito = () => {
                 <p className="fw-bold text-success">Subtotal: {formatoCLP(product.precio * product.cantidad)}</p>
               </Col>
 
-              {/* 🔹 Botones para modificar cantidad */}
               <Col md={3} className="text-center">
                 <InputGroup>
                   <Button

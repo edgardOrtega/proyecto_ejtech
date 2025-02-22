@@ -6,11 +6,53 @@ const router = express.Router();
 // 🔹 Obtener todos los productos
 router.get("/productos", async (req, res) => {
     try {
-        const { rows } = await pool.query("SELECT * FROM producto ORDER BY id_producto ASC");
+        const { rows } = await pool.query(
+            `SELECT p.*, c.nombre AS categoria 
+             FROM producto p 
+             JOIN categoria c ON p.id_categoria = c.id_categoria 
+             ORDER BY p.id_producto ASC`
+        );
         res.json(rows);
     } catch (error) {
         console.error("🚨 Error en /api/productos:", error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: "Error al obtener los productos." });
+    }
+});
+
+// 🔹 Crear un nuevo producto
+router.post("/productos", async (req, res) => {
+    try {
+        const { name, description, price, stock, category, image } = req.body;
+
+        // 🔹 Validar que los campos obligatorios estén llenos
+        if (!name || !description || !price || !stock || !category || !image) {
+            return res.status(400).json({ error: "Todos los campos son obligatorios." });
+        }
+
+        // 🔹 Buscar el id_categoria según el nombre de la categoría
+        const categoriaQuery = await pool.query(
+            "SELECT id_categoria FROM categoria WHERE nombre = $1",
+            [category]
+        );
+
+        if (categoriaQuery.rowCount === 0) {
+            return res.status(400).json({ error: "La categoría especificada no existe." });
+        }
+
+        const id_categoria = categoriaQuery.rows[0].id_categoria;
+
+        // 🔹 Insertar el producto en la base de datos
+        const result = await pool.query(
+            `INSERT INTO producto (nombre, descripcion, precio, stock, id_categoria, imagen) 
+             VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+            [name, description, price, stock, id_categoria, image]
+        );
+
+        res.status(201).json({ success: true, message: "Producto agregado correctamente", producto: result.rows[0] });
+
+    } catch (error) {
+        console.error("🚨 Error en /api/productos:", error);
+        res.status(500).json({ error: "Error al agregar el producto." });
     }
 });
 

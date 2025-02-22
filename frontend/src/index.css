@@ -1,5 +1,6 @@
-.logo  {
-  height: 50px; /* Ajusta el tamaño */
+/* LOGO */
+.logo {
+  height: 55px; /* Ajusta el tamaño */
   width: auto; /* Mantiene la proporción */
   display: block;
   object-fit: contain; /* Asegura que se vea bien */
@@ -7,12 +8,33 @@
   padding: 0 !important; /* Elimina cualquier padding */
 }
 
+/* NAVBAR */
 .navbar-brand {
   display: flex;
   align-items: center;
   padding: 0; /* Elimina espacios innecesarios */
 }
 
+.nav-link {
+  color: black !important;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 12px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.active-link {
+  background-color: yellow !important;
+  color: black !important;
+  font-weight: bold;
+  border-radius: 12px;
+}
+
+.rol-navbar {
+  transform: scale(0.7);
+}
+
+/* LOGIN */
 .login-card {
   background-color: yellow;
   border-radius: 20px;
@@ -30,6 +52,11 @@
   border-radius: 30px;
 }
 
+.boton-login {
+  margin-top: 5px;
+}
+
+/* 🔹 CARRITO */
 .cart-container {
   display: flex;
   flex-direction: column;
@@ -91,31 +118,10 @@
   margin-right: 5px;
 }
 
-.boton-login {
-  margin-top: 5px;
-}
-
-.nav-link {
-  color: black !important;
-  text-decoration: none;
-  padding: 8px 16px;
-  border-radius: 12px;
-  transition: background-color 0.3s ease-in-out;
-}
-
-.active-link {
-  background-color: yellow !important;
-  color: black !important;
-  font-weight: bold;
-  border-radius: 12px;
-}
-
-.boton-comprar, .boton-vaciar {
+/* BOTONES GENERALES */
+.boton-comprar,
+.boton-vaciar {
   margin-bottom: 40px;
   margin-left: 5px;
   margin-right: 5px;
-}
-
-.rol-navbar {
-  transform: scale(0.7);
 }
