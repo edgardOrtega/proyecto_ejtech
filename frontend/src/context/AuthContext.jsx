@@ -11,35 +11,35 @@ export const AuthProvider = ({ children }) => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
       const parsedUser = JSON.parse(savedUser);
-      setUser({ ...parsedUser, rol: Number(parsedUser.rol) }); // Convertir rol a número
+      setUser({ ...parsedUser, rol: Number(parsedUser.rol),username:parsedUser.username }); // Convertir rol a número
     }
     setLoading(false); // 🔹 Marcar que la carga ha terminado
   }, []);
 
   const login = async (email, password) => {
     try {
-      const response = await fetch("http://localhost:3000/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+        const response = await fetch("http://localhost:3000/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || "Error al iniciar sesión");
-      }
-
-      const userData = { email, rol: Number(data.rol) };
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(userData));
-      setUser(userData);
-
-      return { success: true, rol: userData.rol };
+        if (!response.ok) {
+            throw new Error(data.error || "Error al iniciar sesión");
+        }
+        console.log(data)
+        const userData = { email, username: data.username, rol: Number(data.rol) };
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(userData));
+        setUser(userData);
+        console.log(userData)
+        return { success: true, rol: userData.rol };
     } catch (error) {
-      return { success: false, message: error.message };
+        return { success: false, message: error.message };
     }
-  };
+};
 
   const logout = () => {
     setUser(null);

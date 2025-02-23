@@ -17,6 +17,7 @@ const ListarProductos = () => {
       try {
         const response = await axios.get(API_URL); // ✅ Cambiamos la URL a la API real
         setProducts(response.data);
+        console.log("Productos obtenidos:", response.data);
       } catch (err) {
         setError("Error al cargar los productos");
       } finally {
@@ -42,11 +43,10 @@ const ListarProductos = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          // ✅ Enviar solicitud DELETE al backend
-          const response = await axios.delete(`http://localhost:3000/api/eliminarProducto/${id}`);
+          // ✅ Corrige la URL del DELETE con el ID correcto
+          const response = await axios.delete(`http://localhost:3000/api/listarProductos/${id}`);
   
           if (response.status === 200) {
-            // 🔥 Eliminar del estado después de confirmación del backend
             setProducts((prevProducts) => prevProducts.filter(product => product.id_producto !== id));
   
             Swal.fire("Eliminado!", "El producto ha sido eliminado.", "success");
@@ -58,6 +58,8 @@ const ListarProductos = () => {
       }
     });
   };
+  
+
 
   if (loading) return <Spinner animation="border" className="d-block mx-auto mt-4" />;
   if (error) return <p className="text-center text-danger mt-4">{error}</p>;

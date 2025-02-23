@@ -1,24 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Button, Card } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
 
 const Profile = () => {
-  const { user } = useAuth(); // Obtener usuario desde el contexto
+  const { user } = useAuth(); 
 
-  // Inicializar los valores del formulario con los datos del contexto
   const [userData, setUserData] = useState({
-    userName: user?.username || "", // Asegurar que `user.username` esté disponible
-    email: user?.email || "",
-    rol: user?.rol === 1 ? "Administrador" : "Cliente", // Convertir el rol en texto
+      username: user?.username || "", // ✅ Ahora sí debería mostrar el username correcto
+      email: user?.email || "",
+      rol: user?.rol === 1 ? "Administrador" : "Cliente",
   });
 
-  // Manejar cambios en los inputs
-  const handleChange = (e) => {
-    setUserData({
-      ...userData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  // ✅ Cuando `user` cambie, actualizar `userData`
+  useEffect(() => {
+    if (user) {
+      setUserData({
+        username: user.username || "Usuario",
+        email: user.email || "Sin email",
+        rol: user.rol === 1 ? "Administrador" : "Cliente",
+      });
+    }
+  }, [user]); // 👈 Se ejecuta cada vez que `user` cambia
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
@@ -28,40 +30,18 @@ const Profile = () => {
           <Form>
             <Form.Group className="mb-3">
               <Form.Label>Nombre de usuario</Form.Label>
-              <Form.Control 
-                type="text" 
-                name="userName"
-                value={userData.username} 
-                onChange={handleChange} 
-                disabled // Deshabilitado si no se quiere editar
-              />
+              <Form.Control type="text" value={userData.username} disabled />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Email</Form.Label>
-              <Form.Control 
-                type="email" 
-                name="email"
-                value={userData.email} 
-                onChange={handleChange} 
-                disabled
-              />
+              <Form.Control type="email" value={userData.email} disabled />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Rol</Form.Label>
-              <Form.Control 
-                type="text" 
-                name="rol"
-                value={userData.rol} 
-                onChange={handleChange} 
-                disabled
-              />
+              <Form.Control type="text" value={userData.rol} disabled />
             </Form.Group>
-
-            <Button variant="dark" className="w-100">
-              Guardar
-            </Button>
           </Form>
         </Card.Body>
       </Card>

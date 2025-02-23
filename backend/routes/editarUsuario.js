@@ -3,30 +3,9 @@ const pool = require("../db");
 const bcrypt = require("bcryptjs");
 const router = express.Router();
 
-// Obtener un usuario por ID
-router.get("/editarUsuario/:id_usuario", async (req, res) => {
-    try {
-        const id_usuario = parseInt(req.params.id_usuario, 10);
-        if (isNaN(id_usuario)) {
-            return res.status(400).json({ error: "ID de usuario inválido" });
-        }
 
-        const userResult = await pool.query("SELECT * FROM usuarios WHERE id = $1", [id_usuario]);
-
-        if (userResult.rows.length === 0) {
-            return res.status(404).json({ error: "Usuario no encontrado" });
-        }
-
-        res.json(userResult.rows[0]);
-    } catch (error) {
-        console.error("🚨 Error obteniendo usuario:", error);
-        res.status(500).json({ error: "Error interno del servidor" });
-    }
-});
 
 // Editar un usuario
-
-
 router.put("/editarUsuario/:id_usuario", async (req, res) => {
     try {
         const id_usuario = parseInt(req.params.id_usuario, 10);

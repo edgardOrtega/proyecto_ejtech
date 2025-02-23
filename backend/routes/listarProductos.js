@@ -23,10 +23,11 @@ router.get("/listarProductos", async (req, res) => {
 
 // ✅ Ruta para eliminar un producto por ID
 router.delete("/listarProductos/:id", async (req, res) => {
-    const { id } = req.params; // 📌 Obtener el ID del producto a eliminar
+    const { id } = req.params;
+    
     try {
-        // 🔥 Verifica que el producto exista antes de eliminarlo
-        const result = await pool.query("DELETE FROM producto WHERE id_producto = $1 RETURNING *", [id]);
+        // ✅ Convierte el id a número si es necesario
+        const result = await pool.query("DELETE FROM producto WHERE id_producto = $1 RETURNING *", [Number(id)]);
 
         if (result.rowCount === 0) {
             return res.status(404).json({ error: "Producto no encontrado" });
@@ -38,6 +39,5 @@ router.delete("/listarProductos/:id", async (req, res) => {
         res.status(500).json({ error: "Error interno del servidor" });
     }
 });
-
 
 module.exports = router;

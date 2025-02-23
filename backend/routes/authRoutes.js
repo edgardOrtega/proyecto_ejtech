@@ -31,7 +31,7 @@ router.post("/login", async (req, res) => {
         const { email, password } = req.body;
 
         const userResult = await pool.query(
-            `SELECT u.id_usuario, u.email, u.password, u.id_rol, r.nombre AS nombre_rol 
+            `SELECT u.id_usuario, u.email, u.password, u.id_rol,u.username, r.nombre AS nombre_rol 
              FROM usuario u 
              JOIN rol r ON u.id_rol = r.id_rol 
              WHERE u.email = $1`,
@@ -48,6 +48,7 @@ router.post("/login", async (req, res) => {
             {
                 id_usuario: user.id_usuario,
                 email: user.email,
+                username:user.username,
                 id_rol: user.id_rol,
                 nombre_rol: user.nombre_rol?.trim() || "Usuario",
             },
@@ -55,7 +56,7 @@ router.post("/login", async (req, res) => {
             { expiresIn: "2h" }
         );
 
-        res.json({ success: true, token, id_usuario: user.id_usuario, email: user.email, rol: user.id_rol, nombre_rol: user.nombre_rol?.trim() || "Usuario" });
+        res.json({ success: true, token, id_usuario: user.id_usuario, email: user.email,username: user.username, rol: user.id_rol, nombre_rol: user.nombre_rol?.trim() || "Usuario" });
 
     } catch (error) {
         console.error("🚨 Error en /api/login:", error);
