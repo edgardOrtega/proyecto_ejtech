@@ -2,9 +2,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { Card, Button, Form, Spinner, Row, Col } from "react-bootstrap"; // Importamos Card, Form y Button
+import { Card, Button, Form, Spinner, Row, Col } from "react-bootstrap";
 
-const JSON_FILE = "/data/tecnologia.json"; // Ruta del JSON
+const API_URL = "http://localhost:3000/api/editarProducto"; // ✅ URL base de la API
 
 const EditarProducto = () => {
   const { id } = useParams();
@@ -17,51 +17,50 @@ const EditarProducto = () => {
   useEffect(() => {
     const fetchProducto = async () => {
       try {
-        const response = await axios.get(JSON_FILE);
-        console.log("Datos obtenidos:", response.data);
         console.log("ID recibido:", id);
-
-        const product = response.data.find((prod) => prod.id.toString() === id);
-
-        if (!product) {
+        const response = await axios.get(`${API_URL}/${id}`);
+        console.log("Respuesta de la API:", response.data);
+  
+        if (!response.data) {
           throw new Error("Producto no encontrado");
         }
-
-        setProductoOriginal(product);
-        setProductoEditado({ ...product }); // Copiamos el producto original
+  
+        setProductoOriginal(response.data);
+        setProductoEditado({ ...response.data }); // Clonamos el producto para edición
       } catch (err) {
-        setError(err.message);
+        console.error("🚨 Error al obtener el producto:", err);
+        setError("Producto no encontrado");
         Swal.fire("Error", "Producto no encontrado", "error");
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchProducto();
   }, [id]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProductoEditado({ ...productoEditado, [name]: value });
-  };
+  const handleSave = async () => {
+    try {
+      const response = await axios.put(`${API_URL}/${id}`, productoEditado); // ✅ Hacer el PUT para actualizar
 
-  const handleSave = () => {
-    Swal.fire({
-      title: "¿Guardar cambios?",
-      text: "¿Deseas actualizar la información del producto?",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, guardar",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        console.log("Datos actualizados:", productoEditado);
+      if (response.status === 200) {
         Swal.fire("Guardado!", "Los cambios han sido guardados.", "success");
         navigate("/"); // Redirigir a la lista de productos
       }
+    } catch (error) {
+      Swal.fire("Error", "No se pudo actualizar el producto.", "error");
+    }
+  };
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProductoEditado((prevState) => {
+      console.log("Cambiando:", name, value);
+      return { ...prevState, [name]: value };
     });
   };
+
 
   if (loading) return <Spinner animation="border" className="d-block mx-auto mt-4" />;
   if (error) return <p className="text-center text-danger mt-4">{error}</p>;
@@ -69,28 +68,29 @@ const EditarProducto = () => {
   return (
     <div className="container mt-4">
       <h2 className="text-center">Editar Producto</h2>
-
       <Row className="mt-4">
-        {/* Card del Producto Original */}
         <Col md={6}>
           <Card className="shadow">
-            <Card.Img variant="top" src={productoOriginal.image} style={{ width: "100%", maxHeight: "300px", objectFit: "contain" }}    />
+            <Card.Img
+              variant="top"
+              src={productoOriginal.imagen}
+              style={{ width: "100%", maxHeight: "300px", objectFit: "contain" }}
+            />
             <Card.Body>
-              <Card.Title>{productoOriginal.name}</Card.Title>
+              <Card.Title>{productoOriginal.nombre}</Card.Title>
               <Card.Text>
-                <strong>Descripción:</strong> {productoOriginal.description}
+                <strong>Descripción:</strong> {productoOriginal.descripcion}
                 <br />
-                <strong>Precio:</strong> ${productoOriginal.price}
+                <strong>Precio:</strong> ${productoOriginal.precio}
                 <br />
                 <strong>Stock:</strong> {productoOriginal.stock}
                 <br />
-                <strong>Categoría:</strong> {productoOriginal.category}
+                <strong>Categoría:</strong> {productoOriginal.categoria_nombre}
               </Card.Text>
             </Card.Body>
           </Card>
         </Col>
 
-        {/* Card para Editar Producto */}
         <Col md={6}>
           <Card className="shadow">
             <Card.Body>
@@ -100,8 +100,8 @@ const EditarProducto = () => {
                   <Form.Label>Nombre</Form.Label>
                   <Form.Control
                     type="text"
-                    name="name"
-                    value={productoEditado.name}
+                    name="nombre"
+                    value={productoEditado.nombre}
                     onChange={handleChange}
                   />
                 </Form.Group>
@@ -110,8 +110,8 @@ const EditarProducto = () => {
                   <Form.Label>Descripción</Form.Label>
                   <Form.Control
                     type="text"
-                    name="description"
-                    value={productoEditado.description}
+                    name="descripcion"
+                    value={productoEditado.descripcion}
                     onChange={handleChange}
                   />
                 </Form.Group>
@@ -120,8 +120,8 @@ const EditarProducto = () => {
                   <Form.Label>Precio</Form.Label>
                   <Form.Control
                     type="number"
-                    name="price"
-                    value={productoEditado.price}
+                    name="precio"
+                    value={productoEditado.precio}
                     onChange={handleChange}
                   />
                 </Form.Group>
@@ -132,16 +132,6 @@ const EditarProducto = () => {
                     type="number"
                     name="stock"
                     value={productoEditado.stock}
-                    onChange={handleChange}
-                  />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label>Categoría</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="category"
-                    value={productoEditado.category}
                     onChange={handleChange}
                   />
                 </Form.Group>
