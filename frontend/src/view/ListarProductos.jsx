@@ -17,7 +17,6 @@ const ListarProductos = () => {
       try {
         const response = await axios.get(API_URL); // ✅ Cambiamos la URL a la API real
         setProducts(response.data);
-        console.log("Productos obtenidos:", response.data);
       } catch (err) {
         setError("Error al cargar los productos");
       } finally {

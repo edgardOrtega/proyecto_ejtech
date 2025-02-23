@@ -62,7 +62,7 @@ const EditarUsuario = () => {
       payload.password = userData.password;
     }
   
-    console.log("✍ Enviando datos:", payload);
+    //console.log("✍ Enviando datos:", payload);
   
     try {
       const response = await axios.put(`http://localhost:3000/api/editarUsuario/${id_usuario}`, payload, {
