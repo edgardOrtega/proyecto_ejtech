@@ -4,7 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { Card, Button, Form, Spinner, Row, Col } from "react-bootstrap";
 
-const API_URL = "http://localhost:3000/api/editarProducto"; // ✅ URL base de la API
+const API_URL = "http://localhost:3000/api/editarProducto"; //  URL base de la API
 
 const EditarProducto = () => {
   const { id } = useParams();
@@ -40,7 +40,7 @@ const EditarProducto = () => {
   }, [id]);
 
   const handleSave = async (e) => {
-    e.preventDefault(); // ✅ Evita recargar la página
+    e.preventDefault(); //  Evita recargar la página
   
     const { nombre, descripcion, precio, stock } = productoEditado;
   
@@ -54,13 +54,13 @@ const EditarProducto = () => {
       const response = await axios.put(`${API_URL}/${id}`, {
         nombre,
         descripcion,
-        precio: Number(precio), // ✅ Asegurar que sea un número
-        stock: Number(stock),   // ✅ Asegurar que sea un número
+        precio: Number(precio), 
+        stock: Number(stock),  
       });
   
       if (response.status === 200) {
         Swal.fire("Guardado!", "Los cambios han sido guardados.", "success");
-        navigate("/"); // Redirigir a la lista de productos
+        navigate("/ListarProductos"); // Redirigir a la lista de productos
       }
     } catch (error) {
       console.error("Error al actualizar:", error);
