@@ -39,18 +39,35 @@ const EditarProducto = () => {
     fetchProducto();
   }, [id]);
 
-  const handleSave = async () => {
+  const handleSave = async (e) => {
+    e.preventDefault(); // ✅ Evita recargar la página
+  
+    const { nombre, descripcion, precio, stock } = productoEditado;
+  
+    // Validar que los campos requeridos no estén vacíos
+    if (!nombre || !descripcion || !precio || !stock) {
+      Swal.fire("Error", "Todos los campos son obligatorios", "error");
+      return;
+    }
+  
     try {
-      const response = await axios.put(`${API_URL}/${id}`, productoEditado); // ✅ Hacer el PUT para actualizar
-
+      const response = await axios.put(`${API_URL}/${id}`, {
+        nombre,
+        descripcion,
+        precio: Number(precio), // ✅ Asegurar que sea un número
+        stock: Number(stock),   // ✅ Asegurar que sea un número
+      });
+  
       if (response.status === 200) {
         Swal.fire("Guardado!", "Los cambios han sido guardados.", "success");
         navigate("/"); // Redirigir a la lista de productos
       }
     } catch (error) {
+      console.error("Error al actualizar:", error);
       Swal.fire("Error", "No se pudo actualizar el producto.", "error");
     }
   };
+  
 
 
   const handleChange = (e) => {
