@@ -2,15 +2,17 @@ import React from "react";
 import { Card, Container, Row, Col } from "react-bootstrap";
 import imagenCreador1 from "../assets/edgard.png";
 import imagenCreador2 from "../assets/joaquin.png";
+import ListGroup from "react-bootstrap/ListGroup";
 
 const Ejtech = () => {
   return (
     <Container className="text-center p-5">
-      <h1 className="mb-4">Alcance del Proyecto de Compras</h1>
+      <h1 className="mb-4">Alcance del Proyecto EJtec</h1>
       <p className="lead">
-        Nuestro proyecto de compras busca ofrecer una experiencia fluida y eficiente para los usuarios,
-        permitiéndoles explorar productos, agregarlos al carrito y realizar pagos de manera sencilla.
+        Nuestro proyecto EJTECH busca ofrecer una experiencia fluida y eficiente para los usuarios,
+        permitiéndoles explorar productos, agregarlos al carrito.
       </p>
+
       
       <Row className="justify-content-center mt-4">
         <Col md={4} className="d-flex justify-content-center">
