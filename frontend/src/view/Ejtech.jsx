@@ -25,7 +25,7 @@ const Ejtech = () => {
           <Card style={{ width: '18rem' }}>
             <Card.Img variant="top" src={imagenCreador2} alt="Creador 2" />
             <Card.Body>
-              <Card.Title>joaquin Lopez</Card.Title>
+              <Card.Title>Joaquín López</Card.Title>
             </Card.Body>
           </Card>
         </Col>

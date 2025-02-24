@@ -161,7 +161,7 @@ const Galeria = () => {
                         ? "Sin Stock"
                         : cantidadEnCarrito > 0
                         ? `Añadidos: ${cantidadEnCarrito}`
-                        : "Añadir al Carrito"}
+                        : "Añadir al Carrito 🛒"}
                     </Button>
                   </Card.Body>
                 </Card>

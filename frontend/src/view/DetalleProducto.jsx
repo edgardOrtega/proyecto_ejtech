@@ -143,7 +143,7 @@ const DetalleProducto = () => {
                   ? "Sin Stock"
                   : carrito[producto.id_producto]
                   ? `Añadidos: ${carrito[producto.id_producto]}`
-                  : "Añadir al Carrito"}
+                  : "Añadir al Carrito 🛒"}
               </Button>
               <Button 
                 variant={getVolverButtonVariant()} // 🔥 Cambia el color dinámicamente
