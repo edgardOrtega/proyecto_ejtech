@@ -5,7 +5,7 @@ const pool = require("../db");
 
 const router = express.Router();
 
-// 🔹 Registro de usuario
+// Registro de usuario
 router.post("/registro", async (req, res) => {
     try {
         const { username, email, password, fecha_nacimiento, id_rol } = req.body;
@@ -20,12 +20,12 @@ router.post("/registro", async (req, res) => {
 
         res.status(201).json(result.rows[0]);
     } catch (error) {
-        console.error("🚨 Error en /api/registro:", error);
+        console.error(" Error en /api/registro:", error);
         res.status(500).json({ error: error.message });
     }
 });
 
-// 🔹 Login
+//  Login
 router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -59,7 +59,7 @@ router.post("/login", async (req, res) => {
         res.json({ success: true, token, id_usuario: user.id_usuario, email: user.email,username: user.username, rol: user.id_rol, nombre_rol: user.nombre_rol?.trim() || "Usuario" });
 
     } catch (error) {
-        console.error("🚨 Error en /api/login:", error);
+        console.error(" Error en /api/login:", error);
         res.status(500).json({ error: "Error en el servidor" });
     }
 });

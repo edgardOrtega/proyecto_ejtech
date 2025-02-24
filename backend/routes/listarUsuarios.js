@@ -23,21 +23,21 @@ router.delete("/listarUsuarios/:id_usuario", async (req, res) => {
   }
 
   try {
-      await pool.query("BEGIN"); // Iniciar transacción
+      await pool.query("BEGIN"); // Inicio de transacción
 
-      // 1️⃣ Eliminar del carrito (clave foránea de usuario)
+      // 1️ Eliminar del carrito (clave foránea de usuario)
       await pool.query("DELETE FROM carrito WHERE id_usuario = $1", [id_usuario]);
 
-      // 2️⃣ Eliminar detalles de ordenes relacionadas al usuario
+      // 2️ Eliminar detalles de ordenes relacionadas al usuario
       await pool.query(`
           DELETE FROM detalle_orden 
           WHERE id_orden IN (SELECT id_orden FROM orden WHERE id_usuario = $1)
       `, [id_usuario]);
 
-      // 3️⃣ Eliminar las órdenes del usuario
+      // 3️ Eliminar las órdenes del usuario
       await pool.query("DELETE FROM orden WHERE id_usuario = $1", [id_usuario]);
 
-      // 4️⃣ Eliminar el usuario
+      // 4️ Eliminar el usuario
       const result = await pool.query("DELETE FROM usuario WHERE id_usuario = $1", [id_usuario]);
 
       if (result.rowCount === 0) {
@@ -65,7 +65,7 @@ router.delete("/listarUsuarios/:id_usuario", async (req, res) => {
         }
         res.json(rows[0]);
     } catch (error) {
-        console.error("🚨 Error en /listarUsuarios/:id:", error);
+        console.error(" Error en /listarUsuarios/:id:", error);
         res.status(500).json({ error: error.message });
     }
 });

@@ -47,7 +47,7 @@ router.put("/editarUsuario/:id_usuario", async (req, res) => {
 
         res.json({ message: "Usuario actualizado correctamente", user: result.rows[0] });
     } catch (error) {
-        console.error("🚨 Error actualizando usuario:", error);
+        console.error(" Error actualizando usuario:", error);
         res.status(500).json({ error: "Error interno del servidor", details: error.message });
     }
 });

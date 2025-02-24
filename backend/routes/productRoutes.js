@@ -3,7 +3,7 @@ const pool = require("../db");
 
 const router = express.Router();
 
-// 🔹 Obtener todos los productos
+//  Obtener todos los productos
 router.get("/productos", async (req, res) => {
     try {
         const { rows } = await pool.query(
@@ -19,7 +19,7 @@ router.get("/productos", async (req, res) => {
     }
 });
 
-// 🔹 Obtener un solo producto por ID
+//  Obtener un solo producto por ID
 router.get("/productos/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -34,29 +34,27 @@ router.get("/productos/:id", async (req, res) => {
         );
 
         if (rows.length === 0) {
-            console.log("⚠️ Producto no encontrado");
             return res.status(404).json({ error: "Producto no encontrado." });
         }
 
-        console.log("✅ Producto encontrado:", rows[0]);
         res.json(rows[0]);
     } catch (error) {
-        console.error("🚨 Error en /api/productos/:id:", error);
+        console.error(" Error en /api/productos/:id:", error);
         res.status(500).json({ error: "Error al obtener el producto." });
     }
 });
 
-// 🔹 Crear un nuevo producto
+//  Crear un nuevo producto
 router.post("/productos", async (req, res) => {
     try {
         const { name, description, price, stock, category, image } = req.body;
 
-        // 🔹 Validar que los campos obligatorios estén llenos
+        //  Validar que los campos obligatorios estén llenos
         if (!name || !description || !price || !stock || !category || !image) {
             return res.status(400).json({ error: "Todos los campos son obligatorios." });
         }
 
-        // 🔹 Buscar el id_categoria según el nombre de la categoría
+        //  Buscar el id_categoria según el nombre de la categoría
         const categoriaQuery = await pool.query(
             "SELECT id_categoria FROM categoria WHERE nombre = $1",
             [category]
@@ -68,7 +66,7 @@ router.post("/productos", async (req, res) => {
 
         const id_categoria = categoriaQuery.rows[0].id_categoria;
 
-        // 🔹 Insertar el producto en la base de datos
+        //  Insertar el producto en la base de datos
         const result = await pool.query(
             `INSERT INTO producto (nombre, descripcion, precio, stock, id_categoria, imagen) 
              VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
@@ -78,7 +76,7 @@ router.post("/productos", async (req, res) => {
         res.status(201).json({ success: true, message: "Producto agregado correctamente", producto: result.rows[0] });
 
     } catch (error) {
-        console.error("🚨 Error en /api/productos:", error);
+        console.error(" Error en /api/productos:", error);
         res.status(500).json({ error: "Error al agregar el producto." });
     }
 });
