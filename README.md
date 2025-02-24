@@ -389,3 +389,7 @@ proyecto_ejtech/
 │   ├── vite.config.js
 │
 │── README.md (este archivo)
+```
+---
+## Créditos
+Realizado por Edgard Ortega y Joaquín López para el bootcamp de Desarrollo Web FullStack Javascript G68 de Desafío Latam.
