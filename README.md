@@ -13,6 +13,7 @@
 ### 🖥️ Terminal I
 ```bash
 cd backend
+npm install
 nodemon index.js
 ```
 
