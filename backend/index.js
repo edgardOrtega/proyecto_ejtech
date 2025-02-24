@@ -24,7 +24,7 @@ const categoryRoutes = require("./routes/categoryRoutes");
 
 
 
-// 🔹 Usar las rutas con el prefijo "/api"
+// Usar las rutas con el prefijo "/api"
 app.use("/api", authRoutes);
 app.use("/api", userRoutes);
 app.use("/api", productRoutes);
