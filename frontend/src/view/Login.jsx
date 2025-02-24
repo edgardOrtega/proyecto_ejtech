@@ -24,13 +24,16 @@ const Login = () => {
     if (result.success) {
       Swal.fire({
         title: `¡Bienvenido!`,
-        text: `Tu rol es: ${ROLES[result.rol] || "Desconocido"}`, // 🔥 Mapear ID a nombre
+        text: `Tu rol es: ${ROLES[result.rol] || "Desconocido"}`, //  Mapear ID a nombre
         icon: "success",
         confirmButtonText: "Continuar",
-        timer: 2000,
+        timer: 1500,
         showConfirmButton: false,
       }).then(() => {
-        navigate("/Galeria");
+        navigate("/Galeria"); 
+        setTimeout(() => {
+          window.location.reload(); // Recarga la página después de la redirección. Se corrige bug de forma simple y no invasiva.
+        }, 100);
       });
     } else {
       Swal.fire({
