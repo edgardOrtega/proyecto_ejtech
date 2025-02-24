@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 const DetalleProducto = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { fetchCart } = useCart();
+  const { fetchCart } = useCart(); // 🔄 Se agrega fetchCart para actualizar el carrito en la navbar
   const [producto, setProducto] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -74,7 +74,7 @@ const DetalleProducto = () => {
         showConfirmButton: false,
       });
 
-      fetchCart();
+      fetchCart(); // 🔄 Actualiza el globito en la navbar
       setCarrito((prevCarrito) => ({
         ...prevCarrito,
         [producto.id_producto]: (prevCarrito[producto.id_producto] || 0) + cantidad,
