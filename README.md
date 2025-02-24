@@ -132,7 +132,7 @@ CREATE TABLE detalle_orden (
 
 ### 3. **Configurar variables de entorno**
 
-Debes crear un archivo .env en la carpeta backend con la siguiente configuración:
+Modifica el archivo .env en la carpeta backend con la siguiente configuración:
 
 ```code
 PORT=3000
