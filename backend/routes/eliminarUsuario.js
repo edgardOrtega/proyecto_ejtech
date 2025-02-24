@@ -13,7 +13,7 @@ router.delete("/listarUsuarios/:id_usuario", async (req, res) => {
 
         res.json({ message: "Usuario eliminado correctamente" });
     } catch (error) {
-        console.error("🚨 Error eliminando usuario:", error);
+        console.error("Error eliminando usuario:", error);
         res.status(500).json({ error: "Error interno del servidor" });
     }
 });

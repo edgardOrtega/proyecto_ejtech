@@ -4,9 +4,9 @@ const verificarToken = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
-/**
- * 🔹 Obtener historial de órdenes del usuario autenticado
- */
+
+ // Obtener historial de órdenes del usuario autenticado
+
 router.get("/ordenes", verificarToken, async (req, res) => {
     try {
         const id_usuario = req.user.id_usuario;
@@ -35,25 +35,24 @@ router.get("/ordenes", verificarToken, async (req, res) => {
     }
 });
 
-/**
- * 🔹 Crear una nueva orden de compra
- */
+// Crear una nueva orden de compra
+ 
 router.post("/orden", verificarToken, async (req, res) => {
     const client = await pool.connect();
     try {
-        await client.query("BEGIN"); // 🔹 Iniciar transacción
+        await client.query("BEGIN"); //  Iniciar transacción
 
         const id_usuario = req.user.id_usuario;
         const { total, productos } = req.body;
 
-        // 🔹 Insertar la orden en la base de datos y obtener su ID
+        //  Insertar orden en la base de datos y obtener su ID
         const { rows } = await client.query(
             "INSERT INTO orden (id_usuario, total) VALUES ($1, $2) RETURNING id_orden",
             [id_usuario, total]
         );
         const id_orden = rows[0].id_orden;
 
-        // 🔹 Verificar stock y actualizarlo antes de confirmar la compra
+        //  Verificar stock y actualizarlo antes de confirmar la compra
         const ids_productos = productos.map(p => p.id_producto);
         const cantidades = productos.map(p => p.cantidad);
 
@@ -72,7 +71,7 @@ router.post("/orden", verificarToken, async (req, res) => {
             throw new Error("Stock insuficiente o error en la actualización de stock.");
         }
 
-        // 🔹 Insertar detalles de la orden
+        // Insertar detalles de la orden
         const insertDetalleOrdenQuery = `
             INSERT INTO detalle_orden (id_orden, id_producto, cantidad, subtotal)
             SELECT $1, UNNEST($2::int[]), UNNEST($3::int[]), UNNEST($4::numeric[])
@@ -81,19 +80,19 @@ router.post("/orden", verificarToken, async (req, res) => {
         const subtotales = productos.map(p => p.cantidad * p.precio);
         await client.query(insertDetalleOrdenQuery, [id_orden, ids_productos, cantidades, subtotales]);
 
-        // 🔹 Vaciar el carrito después de la compra
+        // Vaciar el carrito después de la compra
         await client.query("DELETE FROM carrito WHERE id_usuario = $1", [id_usuario]);
 
-        await client.query("COMMIT"); // 🔹 Confirmar la transacción
+        await client.query("COMMIT"); //  Confirmar la transacción
 
         res.json({ success: true, message: "Orden creada con éxito", id_orden });
 
     } catch (error) {
-        await client.query("ROLLBACK"); // 🔹 Revertir cambios si hay un error
-        console.error("🚨 Error en /api/orden:", error);
+        await client.query("ROLLBACK"); //  Revertir cambios si hay un error
+        console.error(" Error en /api/orden:", error);
         res.status(500).json({ error: error.message });
     } finally {
-        client.release(); // 🔹 Liberar la conexión
+        client.release(); //  Liberar la conexión
     }
 });
 

@@ -12,8 +12,7 @@ const Navegation = () => {
   const { cart } = useCart(); // Obtener carrito desde el contexto
   const userRole = Number(user?.rol);
   const userRoleName = user?.nombre_rol?.trim() || "";
-
-  // 🔹 Contar los tipos de productos únicos en el carrito
+  //  Contar los tipos de productos únicos en el carrito
   const productTypes = Object.keys(cart).length;
 
   return (
