@@ -6,21 +6,30 @@ import logo from "../assets/edpak.png";
 import Logout from "../view/Logout";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Navegation = () => {
   const { user } = useAuth();
   const { cart, fetchCart } = useCart(); // 🔥 Traer el carrito y su actualización
   const userRole = Number(user?.rol);
   const userRoleName = user?.nombre_rol?.trim() || "";
+  const [cartUpdated, setCartUpdated] = useState(false);
 
   // 🔹 Contar los tipos de productos únicos en el carrito
   const productTypes = Object.keys(cart || {}).length;
 
-  // 🔹 Actualizar el carrito automáticamente al entrar o tras comprar
+  // 🔹 Cargar el carrito al montar el componente
   useEffect(() => {
     fetchCart();
-  }, [cart]); // 🔥 Se ejecuta cada vez que cambia el carrito
+  }, []);
+
+  // 🔹 Escuchar cambios en el carrito SOLO si fue actualizado por el usuario
+  useEffect(() => {
+    if (cartUpdated) {
+      fetchCart();
+      setCartUpdated(false); // 🔥 Reiniciar el estado para evitar bucles
+    }
+  }, [cartUpdated]);
 
   return (
     <Navbar bg="light" expand="lg" className="fixed-top shadow">
@@ -35,47 +44,27 @@ const Navegation = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
-            <Nav.Link 
-              as={NavLink} 
-              to="/" 
-              className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
-            >
+            <Nav.Link as={NavLink} to="/" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>
               Home
             </Nav.Link>
 
             {!user ? (
               <>
-                <Nav.Link 
-                  as={NavLink} 
-                  to="/Register" 
-                  className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
-                >
+                <Nav.Link as={NavLink} to="/Register" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>
                   Registro
                 </Nav.Link>
 
-                <Nav.Link 
-                  as={NavLink} 
-                  to="/Login" 
-                  className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
-                >
+                <Nav.Link as={NavLink} to="/Login" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>
                   Inicio sesión
                 </Nav.Link>
               </>
             ) : (
               <>
-                <Nav.Link 
-                  as={NavLink} 
-                  to="/Profile" 
-                  className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
-                >
+                <Nav.Link as={NavLink} to="/Profile" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>
                   Perfil
                 </Nav.Link>
 
-                <Nav.Link 
-                  as={NavLink} 
-                  to="/Galeria" 
-                  className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
-                >
+                <Nav.Link as={NavLink} to="/Galeria" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>
                   Galería
                 </Nav.Link>
 
@@ -84,7 +73,7 @@ const Navegation = () => {
                   as={NavLink} 
                   to="/Carrito" 
                   className={({ isActive }) => isActive ? "nav-link active-link position-relative cart-button" : "nav-link position-relative cart-button"}
-                  onClick={fetchCart} // 🔥 Se actualiza el carrito al entrar
+                  onClick={() => setCartUpdated(true)} // 🔥 Marcar que se actualizó el carrito
                 >
                   Carrito
                   {productTypes > 0 && (
@@ -93,38 +82,22 @@ const Navegation = () => {
                 </Nav.Link>
 
                 {(userRole === 1 || userRole === 2) && (
-                  <Nav.Link 
-                    as={NavLink} 
-                    to="/Historial" 
-                    className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
-                  >
+                  <Nav.Link as={NavLink} to="/Historial" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>
                     Historial
                   </Nav.Link>
                 )}
 
                 {userRole === 1 && (
                   <>
-                    <Nav.Link 
-                      as={NavLink} 
-                      to="/ListarUsuarios" 
-                      className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
-                    >
+                    <Nav.Link as={NavLink} to="/ListarUsuarios" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>
                       Listar Usuarios
                     </Nav.Link>
 
-                    <Nav.Link 
-                      as={NavLink} 
-                      to="/ListarProductos" 
-                      className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
-                    >
+                    <Nav.Link as={NavLink} to="/ListarProductos" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>
                       Listar Productos
                     </Nav.Link>
 
-                    <Nav.Link 
-                      as={NavLink} 
-                      to="/CrearProducto" 
-                      className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
-                    >
+                    <Nav.Link as={NavLink} to="/CrearProducto" className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}>
                       Crear Producto
                     </Nav.Link>
                   </>

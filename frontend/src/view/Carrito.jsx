@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Button, Container, Row, Col, Spinner, Alert, InputGroup, FormControl } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom"; 
 
 const Carrito = () => {
   const { user } = useAuth();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const { fetchCart } = useCart(); // 🔥 Importar actualización del carrito en navbar
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -40,6 +42,7 @@ const Carrito = () => {
       });
 
       setCart(cart.filter((item) => item.id_producto !== id_producto));
+      fetchCart(); // 🔄 Actualiza la navbar
       Swal.fire("Eliminado", "Producto eliminado del carrito", "success");
     } catch (error) {
       Swal.fire("Error", "No se pudo eliminar el producto", "error");
@@ -66,13 +69,12 @@ const Carrito = () => {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || "No se pudo vaciar el carrito");
+        throw new Error("No se pudo vaciar el carrito");
       }
 
-      setCart([]); 
+      setCart([]);
+      fetchCart(); // 🔄 Actualiza la navbar
       Swal.fire("Carrito vaciado", "Todos los productos han sido eliminados", "success");
     } catch (error) {
       Swal.fire("Error", error.message, "error");
@@ -101,6 +103,7 @@ const Carrito = () => {
           item.id_producto === id_producto ? { ...item, cantidad: newQuantity } : item
         )
       );
+      fetchCart(); // 🔄 Actualiza la navbar
     } catch (error) {
       Swal.fire("Error", "No se pudo actualizar la cantidad", "error");
     }
@@ -111,9 +114,9 @@ const Carrito = () => {
       Swal.fire("Error", "No hay productos en el carrito", "error");
       return;
     }
-  
+
     const total = cart.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
-  
+
     try {
       const response = await fetch("http://localhost:3000/api/orden", {
         method: "POST",
@@ -123,26 +126,25 @@ const Carrito = () => {
         },
         body: JSON.stringify({ total, productos: cart }),
       });
-  
-      const data = await response.json();
-  
+
       if (!response.ok) {
-        throw new Error(data.error || "No se pudo procesar la compra");
+        throw new Error("No se pudo procesar la compra");
       }
-  
+
       Swal.fire({
         title: "Compra exitosa",
         text: "Tu compra ha sido registrada correctamente",
         icon: "success",
       }).then(() => {
         setCart([]);
-        navigate("/Historial"); 
+        fetchCart(); // 🔄 Actualiza la navbar
+        navigate("/Historial");
       });
-  
+
     } catch (error) {
       Swal.fire("Error", error.message, "error");
     }
-  };  
+  };
 
   return (
     <Container className="mt-5 text-center">
