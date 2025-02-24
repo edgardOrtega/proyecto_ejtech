@@ -19,7 +19,7 @@ router.get("/editarProducto/:id_producto", async (req, res) => {
             WHERE p.id_producto = $1`,
       [id_producto]
     );
-    console.log("🔹 Resultado de la consulta:", result.rows);
+    console.log("Resultado de la consulta:", result.rows);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Producto no encontrado" });
@@ -27,7 +27,7 @@ router.get("/editarProducto/:id_producto", async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error("❌ Error al obtener el producto:", error);
+    console.error("rror al obtener el producto:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
@@ -35,7 +35,7 @@ router.get("/editarProducto/:id_producto", async (req, res) => {
 // Editar un producto (sin actualizar la categoría)
 router.put("/editarProducto/:id_producto", async (req, res) => {
     const id_producto = parseInt(req.params.id_producto, 10);
-    const { nombre, descripcion, precio, stock } = req.body; // ❌ Eliminar `id_categoria`
+    const { nombre, descripcion, precio, stock } = req.body; 
   
     if (isNaN(id_producto)) {
       return res.status(400).json({ error: "ID inválido" });
@@ -44,7 +44,7 @@ router.put("/editarProducto/:id_producto", async (req, res) => {
     try {
       const result = await pool.query(
         "UPDATE producto SET nombre = $1, descripcion = $2, precio = $3, stock = $4, actualizado_en = CURRENT_TIMESTAMP WHERE id_producto = $5 RETURNING *",
-        [nombre, descripcion, precio, stock, id_producto] // ❌ Ya no pasamos `id_categoria`
+        [nombre, descripcion, precio, stock, id_producto] 
       );
   
       if (result.rowCount === 0) {
