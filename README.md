@@ -41,14 +41,18 @@ Si usas la **terminal**, conéctate a PostgreSQL:
 ```bash
 psql -U tu_usuario
 ```
-### 2. **Ejecutar el siguiente script**
+### 2. **BASE DE DATOS**
+Crear y conectarse
 ```code
 -- Crear Base de Datos: tienda_tecnologica
 CREATE DATABASE tienda_tecnologica;
 
 -- Conectarse a la base de datos
 \c tienda_tecnologica;
+```
 
+Ejecutar el siguiente script:
+```code
 -- Crear Tabla: rol
 CREATE TABLE rol (
     id_rol SERIAL PRIMARY KEY,
