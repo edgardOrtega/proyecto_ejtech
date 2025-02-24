@@ -1,5 +1,5 @@
 const request = require("supertest");
-const app = require("../index"); // Asegúrate de que tu index.js exporte 'app'
+const app = require("../index"); 
 const pool = require("../db");
 
 // 3. Prueba para eliminar un producto

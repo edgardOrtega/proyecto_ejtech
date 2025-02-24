@@ -5,19 +5,22 @@ import Navbar from "react-bootstrap/Navbar";
 import logo from "../assets/edpak.png";
 import Logout from "../view/Logout";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
 const Navegation = () => {
   const { user } = useAuth();
-  const userRole = Number(user?.rol); // 🔹 Convertir rol a número si es string
-  const userRoleName = user?.nombre_rol?.trim() || ""; // 🔹 Obtener el nombre del rol y evitar valores nulos
+  const { cart } = useCart(); // Obtener carrito desde el contexto
+  const userRole = Number(user?.rol);
+  const userRoleName = user?.nombre_rol?.trim() || "";
+
+  // 🔹 Contar los tipos de productos únicos en el carrito
+  const productTypes = Object.keys(cart).length;
 
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar bg="light" expand="lg" className="fixed-top shadow">
       <Container className="contenedor">
         <Navbar.Brand as={NavLink} to="/">
           <img className="logo img-fluid rounded" src={logo} alt="Proyecto Tecnológico" />
-          
-          {/* 🔹 Mostrar el rol solo si el usuario NO es cliente y el nombre del rol existe */}
           {user && userRole !== 2 && userRoleName && (
             <span className="text-secondary rol-navbar">{userRoleName}</span>
           )}
@@ -70,28 +73,28 @@ const Navegation = () => {
                   Galería
                 </Nav.Link>
 
-                {/* 🔹 Accesible para clientes y administradores */}
-                {(userRole === 1 || userRole === 2) && (
-                  <>
-                    <Nav.Link 
-                      as={NavLink} 
-                      to="/Carrito" 
-                      className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
-                    >
-                      Carrito
-                    </Nav.Link>
+                {/* 🔹 Carrito con contador de tipos de productos */}
+                <Nav.Link 
+                  as={NavLink} 
+                  to="/Carrito" 
+                  className={({ isActive }) => isActive ? "nav-link active-link position-relative" : "nav-link position-relative"}
+                >
+                  Carrito
+                  {productTypes > 0 && (
+                    <span className="cart-badge">{productTypes}</span>
+                  )}
+                </Nav.Link>
 
-                    <Nav.Link 
-                      as={NavLink} 
-                      to="/Historial" 
-                      className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
-                    >
-                      Historial
-                    </Nav.Link>
-                  </>
+                {(userRole === 1 || userRole === 2) && (
+                  <Nav.Link 
+                    as={NavLink} 
+                    to="/Historial" 
+                    className={({ isActive }) => isActive ? "nav-link active-link" : "nav-link"}
+                  >
+                    Historial
+                  </Nav.Link>
                 )}
 
-                {/* 🔹 Opciones exclusivas para ADMINISTRADOR (id_rol === 1) */}
                 {userRole === 1 && (
                   <>
                     <Nav.Link 

@@ -4,7 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { Card, Button, Form, Spinner, Row, Col } from "react-bootstrap";
 
-const API_URL = "http://localhost:3000/api/editarProducto"; //  URL base de la API
+const API_URL = "http://localhost:3000/api/editarProducto"; // URL base de la API
 
 const EditarProducto = () => {
   const { id } = useParams();
@@ -20,11 +20,11 @@ const EditarProducto = () => {
         console.log("ID recibido:", id);
         const response = await axios.get(`${API_URL}/${id}`);
         console.log("Respuesta de la API:", response.data);
-  
+
         if (!response.data) {
           throw new Error("Producto no encontrado");
         }
-  
+
         setProductoOriginal(response.data);
         setProductoEditado({ ...response.data }); // Clonamos el producto para edición
       } catch (err) {
@@ -35,29 +35,29 @@ const EditarProducto = () => {
         setLoading(false);
       }
     };
-  
+
     fetchProducto();
   }, [id]);
 
   const handleSave = async (e) => {
-    e.preventDefault(); //  Evita recargar la página
-  
+    e.preventDefault(); // Evita recargar la página
+
     const { nombre, descripcion, precio, stock } = productoEditado;
-  
+
     // Validar que los campos requeridos no estén vacíos
     if (!nombre || !descripcion || !precio || !stock) {
       Swal.fire("Error", "Todos los campos son obligatorios", "error");
       return;
     }
-  
+
     try {
       const response = await axios.put(`${API_URL}/${id}`, {
         nombre,
         descripcion,
-        precio: Number(precio), 
-        stock: Number(stock),  
+        precio: Number(precio),
+        stock: Number(stock),
       });
-  
+
       if (response.status === 200) {
         Swal.fire("Guardado!", "Los cambios han sido guardados.", "success");
         navigate("/ListarProductos"); // Redirigir a la lista de productos
@@ -67,8 +67,6 @@ const EditarProducto = () => {
       Swal.fire("Error", "No se pudo actualizar el producto.", "error");
     }
   };
-  
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -78,14 +76,14 @@ const EditarProducto = () => {
     });
   };
 
-
   if (loading) return <Spinner animation="border" className="d-block mx-auto mt-4" />;
   if (error) return <p className="text-center text-danger mt-4">{error}</p>;
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 editarproducto">
       <h2 className="text-center">Editar Producto</h2>
       <Row className="mt-4">
+        {/* 🔹 Columna izquierda: Producto reflejado */}
         <Col md={6}>
           <Card className="shadow">
             <Card.Img
@@ -95,19 +93,32 @@ const EditarProducto = () => {
             />
             <Card.Body>
               <Card.Title>{productoOriginal.nombre}</Card.Title>
-              <Card.Text>
+
+              {/* 🔹 Descripción con barra de desplazamiento */}
+              <div
+                style={{
+                  maxHeight: "200px",
+                  overflowY: "auto",
+                  padding: "10px",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  backgroundColor: "#f9f9f9",
+                }}
+              >
                 <strong>Descripción:</strong> {productoOriginal.descripcion}
-                <br />
-                <strong>Precio:</strong> ${productoOriginal.precio}
-                <br />
-                <strong>Stock:</strong> {productoOriginal.stock}
-                <br />
-                <strong>Categoría:</strong> {productoOriginal.categoria_nombre}
-              </Card.Text>
+              </div>
+
+              <br />
+              <strong>Precio:</strong> ${productoOriginal.precio}
+              <br />
+              <strong>Stock:</strong> {productoOriginal.stock}
+              <br />
+              <strong>Categoría:</strong> {productoOriginal.categoria_nombre}
             </Card.Body>
           </Card>
         </Col>
 
+        {/* 🔹 Columna derecha: Formulario de edición */}
         <Col md={6}>
           <Card className="shadow">
             <Card.Body>
@@ -126,10 +137,14 @@ const EditarProducto = () => {
                 <Form.Group className="mb-3">
                   <Form.Label>Descripción</Form.Label>
                   <Form.Control
-                    type="text"
+                    as="textarea" // ⬅️ Cambiado a 'textarea' para mejor edición
                     name="descripcion"
                     value={productoEditado.descripcion}
                     onChange={handleChange}
+                    style={{
+                      maxHeight: "250px", // ⬅️ Aumentado el height para mejor edición
+                      resize: "vertical", // ⬅️ Permite expandir solo en vertical
+                    }}
                   />
                 </Form.Group>
 

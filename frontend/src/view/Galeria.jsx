@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button, Spinner, Alert, InputGroup, FormControl } from "react-bootstrap";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const Galeria = () => {
@@ -73,19 +74,17 @@ const Galeria = () => {
         showConfirmButton: false,
       });
   
-      // ✅ Actualizar el estado inmediatamente sin recargar la vista
       setCarrito((prevCarrito) => ({
         ...prevCarrito,
         [product.id_producto]: (prevCarrito[product.id_producto] || 0) + quantities[product.id_producto],
       }));
   
-      fetchCart(); // ✅ También actualiza el carrito globalmente
+      fetchCart();
   
     } catch (error) {
       Swal.fire("Error", error.message, "error");
     }
   };
-  
 
   const formatoCLP = (valor) => {
     return `$${Number(valor).toLocaleString("es-CL")}`;
@@ -104,19 +103,35 @@ const Galeria = () => {
           productos.map((product) => {
             const cantidadEnCarrito = carrito[product.id_producto] || 0;
             const stockVisual = getStockVisual(product);
+            const descripcionCorta = product.descripcion.length > 60
+              ? `${product.descripcion.slice(0, 60)}...`
+              : product.descripcion;
 
             return (
               <Col key={product.id_producto} md={4} lg={3} className="mb-4">
                 <Card className="shadow-sm p-3 rounded text-center" style={{ border: "3px solid yellow" }}>
-                  <Card.Img variant="top" src={product.imagen} alt={product.nombre} style={{ height: "200px", objectFit: "contain" }} />
+                  
+                  <Card.Img 
+                    variant="top" 
+                    src={product.imagen} 
+                    alt={product.nombre} 
+                    style={{ height: "200px", objectFit: "contain" }} 
+                  />
+
                   <Card.Body>
                     <Card.Title className="fw-bold">{product.nombre}</Card.Title>
-                    <Card.Text className="text-muted">{product.descripcion}</Card.Text>
+                    
+                    <Card.Text className="text-muted">{descripcionCorta}</Card.Text>
+
                     <p className="fw-bold">Precio: {formatoCLP(product.precio)}</p>
 
                     <p className={`fw-bold ${stockVisual === 0 ? "text-danger" : ""}`}>
                       Stock: {stockVisual}
                     </p>
+
+                    <Link to={`/Producto/${product.id_producto}`} className="d-block mb-2">
+                      <Button variant="info" className="w-100">Ver más</Button>
+                    </Link>
 
                     <InputGroup className="mb-3 justify-content-center">
                       <Button 
@@ -136,11 +151,11 @@ const Galeria = () => {
                       </Button>
                     </InputGroup>
 
-                    {/* 🔹 Botón dinámico mostrando "Llevas: X" cuando hay productos en el carrito */}
                     <Button
                       variant={cantidadEnCarrito > 0 ? "success" : "dark"}
                       onClick={() => handleAddToCart(product)}
                       disabled={stockVisual === 0}
+                      className="w-100"
                     >
                       {stockVisual === 0
                         ? "Sin Stock"
@@ -148,7 +163,6 @@ const Galeria = () => {
                         ? `Añadidos: ${cantidadEnCarrito}`
                         : "Añadir al Carrito"}
                     </Button>
-
                   </Card.Body>
                 </Card>
               </Col>
