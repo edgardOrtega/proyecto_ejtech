@@ -1,8 +1,10 @@
 import React from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import grupoImage from "../assets/grupo.png";
-
+import { useNavigate } from "react-router-dom";
 const Home = () => {
+
+  const navigate = useNavigate();
   return (
     <Container className="py-5">
       <Row className="align-items-center">
@@ -17,7 +19,8 @@ const Home = () => {
             nec nisl ullamcorper eleifend. Praesent risus leo, fringilla et
             ipsum.
           </p>
-          <Button style={{ backgroundColor: "#fefe00", color: "black", border: "none", fontWeight: "bold" }}>
+          <Button style={{ backgroundColor: "#fefe00", color: "black", border: "none", fontWeight: "bold" }}
+          onClick={() => navigate("/Ejtech")} >
             DESCÚBRELO
           </Button>
         </Col>

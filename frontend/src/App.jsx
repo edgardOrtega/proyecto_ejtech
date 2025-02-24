@@ -21,6 +21,7 @@ import EditarProducto from "./view/EditarProducto";
 import Error404 from "./view/Error404";
 import GuestRoute from "./components/GuestRoute";
 import DetalleProducto from "./view/DetalleProducto";
+import Ejtech from "./view/Ejtech";
 
 function App() {
   useEffect(() => {
@@ -33,10 +34,11 @@ function App() {
       <Routes>
         {/* Rutas públicas */}
         <Route path="/" element={<Home />} />
-
+        <Route path="/Ejtech" element={<Ejtech />} />
         {/* 🔹 Solo accesibles para usuarios NO logueados */}
         <Route element={<GuestRoute />}>
           <Route path="/Login" element={<Login />} />
+
           <Route path="/Register" element={<Register />} />
         </Route>
 
