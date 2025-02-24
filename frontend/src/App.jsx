@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import "./App.css";
 import Navegation from "./components/Navegation";
 import Home from "./view/Home";
@@ -20,50 +20,12 @@ import EditarUsuario from "./view/EditarUsuario";
 import EditarProducto from "./view/EditarProducto";
 import Error404 from "./view/Error404";
 import GuestRoute from "./components/GuestRoute";
+import DetalleProducto from "./view/DetalleProducto";
 
 function App() {
-  const [productos, setProductos] = useState([]);
-  const [stockDisponible, setStockDisponible] = useState(() => {
-    const savedStock = localStorage.getItem("stockDisponible");
-    return savedStock ? JSON.parse(savedStock) : {};
-  });
-
   useEffect(() => {
-    fetch("/data/tecnologia.json")
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setProductos(data);
-          setStockDisponible((prev) => {
-            const newStock = { ...prev };
-            data.forEach((producto, index) => {
-              const id = index + 1;
-              if (newStock[id] === undefined) newStock[id] = producto.stock;
-            });
-            localStorage.setItem("stockDisponible", JSON.stringify(newStock));
-            return newStock;
-          });
-        }
-      })
-      .catch((error) => console.error("Error al cargar productos:", error));
+    console.log("✅ Aplicación cargada correctamente");
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem("stockDisponible", JSON.stringify(stockDisponible));
-  }, [stockDisponible]);
-
-  const actualizarStock = (id, cantidad) => {
-    setStockDisponible((prev) => {
-      const stockActual = prev[id] !== undefined ? prev[id] : productos.find(p => p.id === id)?.stock ?? 0;
-      const nuevoStock = Math.max(0, stockActual + cantidad);
-
-      console.log(`🔄 Actualizando stock: ID ${id} - Cambio: ${cantidad} - Nuevo Stock: ${nuevoStock}`);
-
-      const updatedStock = { ...prev, [id]: nuevoStock };
-      localStorage.setItem("stockDisponible", JSON.stringify(updatedStock));
-      return updatedStock;
-    });
-  };
 
   return (
     <AuthProvider>
@@ -84,6 +46,7 @@ function App() {
           <Route path="/Galeria" element={<Galeria />} />
           <Route path="/Carrito" element={<Carrito />} />
           <Route path="/Historial" element={<Historial />} />
+          <Route path="/Producto/:id" element={<DetalleProducto />} />
         </Route>
 
         {/* 🔹 Rutas exclusivas para administradores */}

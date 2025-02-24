@@ -15,6 +15,49 @@
   padding: 0; /* Elimina espacios innecesarios */
 }
 
+.cart-badge {
+  background-color: red;
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  border-radius: 12px; /* Forma ovalada */
+  padding: 4px 10px;
+  min-width: 22px;
+  text-align: center;
+  margin-left: 8px;
+  position: relative;
+  opacity: 0;
+  transform: scale(0);
+  animation: popBadge 1s ease-in-out infinite alternate;
+}
+
+/* 🔹 Punta del globo a la izquierda */
+.cart-badge::after {
+  content: "";
+  position: absolute;
+  left: -5px; /* Punta a la izquierda */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 6px solid red; /* Color de la punta del globo */
+}
+
+/* 🔥 ANIMACIÓN DEL GLOBO */
+@keyframes popBadge {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateX(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+  }
+}
+
+
 .nav-link {
   color: black !important;
   text-decoration: none;
@@ -124,4 +167,9 @@
   margin-bottom: 40px;
   margin-left: 5px;
   margin-right: 5px;
+}
+
+/* MARGEN INFERIOR*/
+.detalle, .editarproducto {
+  margin-bottom: 50px;
 }

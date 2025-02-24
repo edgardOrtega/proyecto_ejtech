@@ -19,6 +19,33 @@ router.get("/productos", async (req, res) => {
     }
 });
 
+// 🔹 Obtener un solo producto por ID
+router.get("/productos/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log(`🔍 Buscando producto con ID: ${id}`);
+
+        const { rows } = await pool.query(
+            `SELECT p.*, c.nombre AS categoria 
+             FROM producto p 
+             JOIN categoria c ON p.id_categoria = c.id_categoria 
+             WHERE p.id_producto = $1`,
+            [id]
+        );
+
+        if (rows.length === 0) {
+            console.log("⚠️ Producto no encontrado");
+            return res.status(404).json({ error: "Producto no encontrado." });
+        }
+
+        console.log("✅ Producto encontrado:", rows[0]);
+        res.json(rows[0]);
+    } catch (error) {
+        console.error("🚨 Error en /api/productos/:id:", error);
+        res.status(500).json({ error: "Error al obtener el producto." });
+    }
+});
+
 // 🔹 Crear un nuevo producto
 router.post("/productos", async (req, res) => {
     try {

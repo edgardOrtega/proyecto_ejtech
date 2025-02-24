@@ -1,3 +1,12 @@
+body {
+  padding-top: 90px; /* Ajusta según la altura de la navbar */
+}
+
+.navbar {
+  height: 70px; /* Asegurar un tamaño adecuado de la navbar */
+  z-index: 1050; /* Para que esté siempre sobre el contenido */
+}
+
 .navbar-nav .nav-link {
   color: black !important;
 }
