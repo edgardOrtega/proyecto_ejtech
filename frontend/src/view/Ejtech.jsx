@@ -2,7 +2,6 @@ import React from "react";
 import { Card, Container, Row, Col } from "react-bootstrap";
 import imagenCreador1 from "../assets/edgard.png";
 import imagenCreador2 from "../assets/joaquin.png";
-import ListGroup from "react-bootstrap/ListGroup";
 
 const Ejtech = () => {
   return (
@@ -13,7 +12,7 @@ const Ejtech = () => {
         permitiéndoles explorar productos, agregarlos al carrito.
       </p>
 
-      
+      <h3 className="mb-4">Creadores</h3>
       <Row className="justify-content-center mt-4">
         <Col md={4} className="d-flex justify-content-center">
           <Card style={{ width: '18rem', border: '2px solid #fefe00', boxShadow: '5px 5px 15px rgba(0, 0, 0, 0.2)' }}>
@@ -23,6 +22,7 @@ const Ejtech = () => {
             </Card.Body>
           </Card>
         </Col>
+
 
         <Col md={4} className="d-flex justify-content-center">
           <Card style={{ width: '18rem', border: '2px solid #fefe00', boxShadow: '5px 5px 15px rgba(0, 0, 0, 0.2)' }}>
