@@ -6,15 +6,21 @@ import logo from "../assets/edpak.png";
 import Logout from "../view/Logout";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import { useEffect } from "react";
 
 const Navegation = () => {
   const { user } = useAuth();
-  const { cart } = useCart(); // Obtener carrito desde el contexto
+  const { cart, fetchCart } = useCart(); // 🔥 Traer el carrito y su actualización
   const userRole = Number(user?.rol);
   const userRoleName = user?.nombre_rol?.trim() || "";
 
   // 🔹 Contar los tipos de productos únicos en el carrito
-  const productTypes = Object.keys(cart).length;
+  const productTypes = Object.keys(cart || {}).length;
+
+  // 🔹 Actualizar el carrito automáticamente al entrar o tras comprar
+  useEffect(() => {
+    fetchCart();
+  }, [cart]); // 🔥 Se ejecuta cada vez que cambia el carrito
 
   return (
     <Navbar bg="light" expand="lg" className="fixed-top shadow">
@@ -77,7 +83,8 @@ const Navegation = () => {
                 <Nav.Link 
                   as={NavLink} 
                   to="/Carrito" 
-                  className={({ isActive }) => isActive ? "nav-link active-link position-relative" : "nav-link position-relative"}
+                  className={({ isActive }) => isActive ? "nav-link active-link position-relative cart-button" : "nav-link position-relative cart-button"}
+                  onClick={fetchCart} // 🔥 Se actualiza el carrito al entrar
                 >
                   Carrito
                   {productTypes > 0 && (
