@@ -6,12 +6,12 @@ const Profile = () => {
   const { user } = useAuth(); 
 
   const [userData, setUserData] = useState({
-      username: user?.username || "", // ✅ Ahora sí debería mostrar el username correcto
+      username: user?.username || "",
       email: user?.email || "",
       rol: user?.rol === 1 ? "Administrador" : "Cliente",
   });
 
-  // ✅ Cuando `user` cambie, actualizar `userData`
+  // Cuando `user` cambie, actualizar `userData`
   useEffect(() => {
     if (user) {
       setUserData({
