@@ -5,14 +5,14 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const [roles, setRoles] = useState([]); // 🔹 Estado para guardar los roles obtenidos del backend
+  const [roles, setRoles] = useState([]); // Estado para guardar los roles obtenidos del backend
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
     fecha_nacimiento: "",
-    id_rol: "", // 🔹 Ahora el id_rol será seleccionado por el usuario
+    id_rol: "", // Ahora el id_rol será seleccionado por el usuario
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);

@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import "./App.css";
 import Navegation from "./components/Navegation";
 import Home from "./view/Home";
@@ -24,9 +23,6 @@ import DetalleProducto from "./view/DetalleProducto";
 import Ejtech from "./view/Ejtech";
 
 function App() {
-  useEffect(() => {
-    console.log("✅ Aplicación cargada correctamente");
-  }, []);
 
   return (
     <AuthProvider>
@@ -35,10 +31,10 @@ function App() {
         {/* Rutas públicas */}
         <Route path="/" element={<Home />} />
         <Route path="/Ejtech" element={<Ejtech />} />
+
         {/* 🔹 Solo accesibles para usuarios NO logueados */}
         <Route element={<GuestRoute />}>
           <Route path="/Login" element={<Login />} />
-
           <Route path="/Register" element={<Register />} />
         </Route>
 
