@@ -6,8 +6,14 @@ import Swal from "sweetalert2";
 
 
 
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
+import { Form, Button, Container } from "react-bootstrap";
+import Swal from "sweetalert2";
+
 const EditarUsuario = () => {
-  const { id_usuario } = useParams(); // 👈 Obtener el ID desde la URL
+  const { id_usuario } = useParams();
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
     username: "",
@@ -17,18 +23,20 @@ const EditarUsuario = () => {
     activo: false,
   });
 
-  const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
+  const [initialUserData, setInitialUserData] = useState(null); // Guardar datos originales
+
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(`${apiUrl}/api/editarUsuario/${id_usuario}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
-        console.log("✅ Datos recibidos:", response.data); // ✅ Verificar los datos recibidos
+        
+        console.log("✅ Datos recibidos:", response.data);
         setUserData(response.data);
+        setInitialUserData(response.data); // Guardamos los valores iniciales
       } catch (error) {
         console.error("❌ Error al obtener usuario:", error.response || error);
         Swal.fire("Error", "Usuario no encontrado", "error");
@@ -49,27 +57,35 @@ const EditarUsuario = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Preparar el payload solo con los campos necesarios
+
+    if (!initialUserData) return;
+
+    // Verificar si el email o la contraseña han cambiado
+    const emailChanged = userData.email !== initialUserData.email;
+    const passwordChanged = userData.password.trim() !== "";
+
+    if ((emailChanged && !passwordChanged) || (!emailChanged && passwordChanged)) {
+      Swal.fire("Error", "Si cambias el email, también debes cambiar la contraseña (y viceversa)", "warning");
+      return;
+    }
+
+    // Crear el payload con los datos a actualizar
     const payload = {
       username: userData.username,
       email: userData.email,
       id_rol: Number(userData.id_rol),
       activo: userData.activo,
     };
-  
-    // Si la contraseña no está vacía, incluirla
-    if (userData.password.trim() !== "") {
+
+    if (passwordChanged) {
       payload.password = userData.password;
     }
-  
-    //console.log("✍ Enviando datos:", payload);
-  
+
     try {
       const response = await axios.put(`${apiUrl}/api/editarUsuario/${id_usuario}`, payload, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-  
+
       console.log("✅ Usuario actualizado:", response.data);
       Swal.fire("Éxito", "Usuario actualizado correctamente", "success");
       navigate("/ListarUsuarios");
@@ -99,13 +115,13 @@ const EditarUsuario = () => {
         </Form.Group>
 
         <Form.Group className="mb-3">
-  <Form.Label>Rol</Form.Label>
-  <Form.Select name="id_rol" value={userData.id_rol} onChange={handleChange} required>
-    <option value="">Selecciona un rol</option>
-    <option value="1">Administrador</option>
-    <option value="2">Cliente</option>
-  </Form.Select>
-</Form.Group>
+          <Form.Label>Rol</Form.Label>
+          <Form.Select name="id_rol" value={userData.id_rol} onChange={handleChange} required>
+            <option value="">Selecciona un rol</option>
+            <option value="1">Administrador</option>
+            <option value="2">Cliente</option>
+          </Form.Select>
+        </Form.Group>
 
         <Form.Group className="mb-3">
           <Form.Check type="checkbox" label="Activo" name="activo" checked={userData.activo} onChange={handleChange} />
