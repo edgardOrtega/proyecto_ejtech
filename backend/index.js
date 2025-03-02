@@ -44,9 +44,7 @@ app.use("/api", editarProductos);
 // 🔹 Redirigir todas las rutas desconocidas al index.html de React
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
-});
-
-*/
+}); */
 
 // 🔹 Iniciar el servidor
 const PORT = process.env.PORT || 3000;
