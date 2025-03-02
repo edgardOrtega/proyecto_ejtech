@@ -2,14 +2,14 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
-import { HashRouter as Router } from "react-router-dom"; // Importa HashRouter
+import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";  
 import { CartProvider } from "./context/CartContext";  
 import { HistoryProvider } from "./context/HistoryContext";  
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <Router> {/* Usa HashRouter en lugar de BrowserRouter */}
+    <BrowserRouter> {}
       <AuthProvider>  
         <CartProvider>  
           <HistoryProvider>  
@@ -17,6 +17,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           </HistoryProvider>
         </CartProvider>
       </AuthProvider>
-    </Router>
+    </BrowserRouter>
   </React.StrictMode>
 );
