@@ -12,6 +12,7 @@ const CrearProducto = () => {
     image: "",
   });
 
+
   const [categories, setCategories] = useState([]);
   const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
   useEffect(() => {
@@ -44,7 +45,7 @@ const CrearProducto = () => {
     try {
       const finalPrice = Number(product.price.replace(/[$.]/g, "")); // 🔹 Convertir el precio a número válido
 
-      const response = await fetch("http://localhost:3000/api/productos", {
+      const response = await fetch(`${apiUrl}/api/productos`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...product, price: finalPrice }),
