@@ -14,7 +14,7 @@ const ListarUsuarios = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(API_URL, {
+        const response = await axios.get(apiUrl, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`, // 🔹 Enviar token de autenticación
           },

@@ -14,7 +14,7 @@ const ListarProductos = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(API_URL); // ✅ Cambiamos la URL a la API real
+        const response = await axios.get(apiUrl); // ✅ Cambiamos la URL a la API real
         setProducts(response.data);
       } catch (err) {
         setError("Error al cargar los productos");
