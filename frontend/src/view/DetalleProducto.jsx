@@ -16,8 +16,10 @@ const DetalleProducto = () => {
   const [stockDisponible, setStockDisponible] = useState(0);
   const [carritoModificado, setCarritoModificado] = useState(false); // Para cambiar color del botón "Volver"
 
+  const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
+
   useEffect(() => {
-    fetch(`http://localhost:3000/api/productos/${id}`)
+    fetch(`${apiUrl}/api/productos/${id}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.error) throw new Error(data.error);
