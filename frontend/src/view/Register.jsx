@@ -18,6 +18,8 @@ const Register = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  console.log(import.meta.env.VITE_API_URL);
+
   // 🔹 Obtener roles del backend al cargar el componente
   useEffect(() => {
     const fetchRoles = async () => {
