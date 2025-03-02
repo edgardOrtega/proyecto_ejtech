@@ -21,9 +21,9 @@ const EditarUsuario = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      console.log(`🔎 URL de la API: ${apiUrl}/${id_usuario}`); // ✅ Verificar en consola
+      console.log(`🔎 URL de la API: ${apiUrl}/EditarUsuario/${id_usuario}`); // ✅ Verificar en consola
       try {
-        const response = await axios.get(`${apiUrl}/EditarUsuario/${id_usuario}`, {
+        const response = await axios.get(`${apiUrl}/editarUsuario/${id_usuario}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
