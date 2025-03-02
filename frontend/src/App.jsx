@@ -22,49 +22,43 @@ import GuestRoute from "./components/GuestRoute";
 import DetalleProducto from "./view/DetalleProducto";
 import Ejtech from "./view/Ejtech";
 
-// Importa HashRouter
-import { HashRouter as Router } from "react-router-dom";
-
 function App() {
 
   return (
     <AuthProvider>
-      {/* Envuelve la aplicación con HashRouter */}
-      <Router>
-        <Navegation />
-        <Routes>
-          {/* Rutas públicas */}
-          <Route path="/" element={<Home />} />
-          <Route path="/Ejtech" element={<Ejtech />} />
+      <Navegation />
+      <Routes>
+        {/* Rutas públicas */}
+        <Route path="/" element={<Home />} />
+        <Route path="/Ejtech" element={<Ejtech />} />
 
-          {/* 🔹 Solo accesibles para usuarios NO logueados */}
-          <Route element={<GuestRoute />}>
-            <Route path="/Login" element={<Login />} />
-            <Route path="/Register" element={<Register />} />
-          </Route>
+        {/* 🔹 Solo accesibles para usuarios NO logueados */}
+        <Route element={<GuestRoute />}>
+          <Route path="/Login" element={<Login />} />
+          <Route path="/Register" element={<Register />} />
+        </Route>
 
-          {/* 🔹 Rutas accesibles para clientes y administradores */}
-          <Route element={<ClientRoute />}>
-            <Route path="/Profile" element={<Profile />} />
-            <Route path="/Galeria" element={<Galeria />} />
-            <Route path="/Carrito" element={<Carrito />} />
-            <Route path="/Historial" element={<Historial />} />
-            <Route path="/Producto/:id" element={<DetalleProducto />} />
-          </Route>
+        {/* 🔹 Rutas accesibles para clientes y administradores */}
+        <Route element={<ClientRoute />}>
+          <Route path="/Profile" element={<Profile />} />
+          <Route path="/Galeria" element={<Galeria />} />
+          <Route path="/Carrito" element={<Carrito />} />
+          <Route path="/Historial" element={<Historial />} />
+          <Route path="/Producto/:id" element={<DetalleProducto />} />
+        </Route>
 
-          {/* 🔹 Rutas exclusivas para administradores */}
-          <Route element={<AdminRoute />}>
-            <Route path="/ListarUsuarios" element={<ListarUsuarios />} />
-            <Route path="/ListarProductos" element={<ListarProductos />} />
-            <Route path="/CrearProducto" element={<CrearProducto />} />
-            <Route path="/EditarProducto/:id" element={<EditarProducto />} />
-            <Route path="/EditarUsuario/:id_usuario" element={<EditarUsuario />} />
-          </Route>
+        {/* 🔹 Rutas exclusivas para administradores */}
+        <Route element={<AdminRoute />}>
+          <Route path="/ListarUsuarios" element={<ListarUsuarios />} />
+          <Route path="/ListarProductos" element={<ListarProductos />} />
+          <Route path="/CrearProducto" element={<CrearProducto />} />
+          <Route path="/EditarProducto/:id" element={<EditarProducto />} />
+          <Route path="/EditarUsuario/:id_usuario" element={<EditarUsuario />} />
+        </Route>
 
-          {/* Página 404 */}
-          <Route path="*" element={<Error404 />} />
-        </Routes>
-      </Router>
+        {/* Página 404 */}
+        <Route path="*" element={<Error404 />} />
+      </Routes>
     </AuthProvider>
   );
 }
