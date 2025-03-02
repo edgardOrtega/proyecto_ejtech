@@ -16,8 +16,7 @@ const EditarProducto = () => {
   useEffect(() => {
     const fetchProducto = async () => {
       try {
-        console.log("ID recibido:", `${apiUrl}/editarProducto/${id}`);
-        const response = await axios.get(`${apiUrl}/editarProducto/${id}`);
+        const response = await axios.get(`${apiUrl}/api/editarProducto/${id}`);
         console.log("Respuesta de la API:", response.data);
 
         if (!response.data) {
