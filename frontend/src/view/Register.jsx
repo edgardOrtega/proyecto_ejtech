@@ -3,7 +3,6 @@ import { Form, Button, InputGroup, Card } from "react-bootstrap";
 import { FaEye } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-require("dotenv").config();
 const Register = () => {
   const [roles, setRoles] = useState([]); // Estado para guardar los roles obtenidos del backend
   const [formData, setFormData] = useState({
