@@ -32,6 +32,7 @@ const ListarProductos = () => {
   };
 
   const handleDelete = async (id) => {
+    console.log("ID del producto a eliminar:", id);
     Swal.fire({
       title: "¿Estás seguro?",
       text: "No podrás revertir esto!",
@@ -45,6 +46,7 @@ const ListarProductos = () => {
         try {
           // ✅ Corrige la URL del DELETE con el ID correcto
           const response = await axios.delete(`${apiUrl}/api/listarProductos/${id}`);
+          console.log(`${apiUrl}/api/listarProductos/${id}`)
   
           if (response.status === 200) {
             setProducts((prevProducts) => prevProducts.filter(product => product.id_producto !== id));
