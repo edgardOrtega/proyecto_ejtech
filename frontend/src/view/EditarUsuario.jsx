@@ -4,8 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Form, Button, Container } from "react-bootstrap";
 import Swal from "sweetalert2";
 
-const API_URL = "http://localhost:3000/api/listarUsuarios"; // Asegúrate de que sea la URL correcta
 
+const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
 const EditarUsuario = () => {
   const { id_usuario } = useParams(); // 👈 Obtener el ID desde la URL
   const navigate = useNavigate();
@@ -19,9 +19,9 @@ const EditarUsuario = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      console.log(`🔎 URL de la API: ${API_URL}/${id_usuario}`); // ✅ Verificar en consola
+      console.log(`🔎 URL de la API: ${apiUrl}/${id_usuario}`); // ✅ Verificar en consola
       try {
-        const response = await axios.get(`${API_URL}/${id_usuario}`, {
+        const response = await axios.get(`${apiUrl}/${id_usuario}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -65,7 +65,7 @@ const EditarUsuario = () => {
     //console.log("✍ Enviando datos:", payload);
   
     try {
-      const response = await axios.put(`http://localhost:3000/api/editarUsuario/${id_usuario}`, payload, {
+      const response = await axios.put(`${apiUrl}/api/editarUsuario/${id_usuario}`, payload, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
   

@@ -4,8 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { Card, Button, Form, Spinner, Row, Col } from "react-bootstrap";
 
-const API_URL = "http://localhost:3000/api/editarProducto"; // URL base de la API
-
+const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
 const EditarProducto = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -18,7 +17,7 @@ const EditarProducto = () => {
     const fetchProducto = async () => {
       try {
         console.log("ID recibido:", id);
-        const response = await axios.get(`${API_URL}/${id}`);
+        const response = await axios.get(`${apiUrl}/${id}`);
         console.log("Respuesta de la API:", response.data);
 
         if (!response.data) {
@@ -51,7 +50,7 @@ const EditarProducto = () => {
     }
 
     try {
-      const response = await axios.put(`${API_URL}/${id}`, {
+      const response = await axios.put(`${apiUrl}/${id}`, {
         nombre,
         descripcion,
         precio: Number(precio),
