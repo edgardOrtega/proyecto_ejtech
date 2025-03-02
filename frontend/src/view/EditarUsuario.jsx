@@ -4,16 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Form, Button, Container } from "react-bootstrap";
 import Swal from "sweetalert2";
 
-
-
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
-import { Form, Button, Container } from "react-bootstrap";
-import Swal from "sweetalert2";
-
 const EditarUsuario = () => {
-  const { id_usuario } = useParams();
+  const { id_usuario } = useParams(); // 👈 Obtener el ID desde la URL
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
     username: "",
@@ -23,20 +15,22 @@ const EditarUsuario = () => {
     activo: false,
   });
 
-  const [initialUserData, setInitialUserData] = useState(null); // Guardar datos originales
+  const [initialUserData, setInitialUserData] = useState(null); // Guardar valores originales
 
-  const apiUrl = import.meta.env.VITE_API_URL;
+  const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
 
   useEffect(() => {
     const fetchUser = async () => {
+      console.log(`🔎 URL de la API: ${apiUrl}/api/editarUsuario/${id_usuario}`); // ✅ Verificar en consola
       try {
         const response = await axios.get(`${apiUrl}/api/editarUsuario/${id_usuario}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         });
-        
-        console.log("✅ Datos recibidos:", response.data);
+        console.log("✅ Datos recibidos:", response.data); // ✅ Verificar los datos recibidos
         setUserData(response.data);
-        setInitialUserData(response.data); // Guardamos los valores iniciales
+        setInitialUserData(response.data); // Guardar valores iniciales
       } catch (error) {
         console.error("❌ Error al obtener usuario:", error.response || error);
         Swal.fire("Error", "Usuario no encontrado", "error");
@@ -60,7 +54,6 @@ const EditarUsuario = () => {
 
     if (!initialUserData) return;
 
-    // Verificar si el email o la contraseña han cambiado
     const emailChanged = userData.email !== initialUserData.email;
     const passwordChanged = userData.password.trim() !== "";
 
@@ -69,7 +62,7 @@ const EditarUsuario = () => {
       return;
     }
 
-    // Crear el payload con los datos a actualizar
+    // Preparar el payload solo con los campos necesarios
     const payload = {
       username: userData.username,
       email: userData.email,
@@ -77,6 +70,7 @@ const EditarUsuario = () => {
       activo: userData.activo,
     };
 
+    // Si la contraseña no está vacía, incluirla
     if (passwordChanged) {
       payload.password = userData.password;
     }
