@@ -191,6 +191,11 @@
   margin-right: 5px;
 }
 
+/* EDITAR PRODUCTO */
+.editarproducto {
+  max-width: 100vw;
+}
+
 /* MARGEN INFERIOR*/
 .detalle, .editarproducto {
   margin-bottom: 50px;
