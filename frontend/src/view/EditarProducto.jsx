@@ -50,7 +50,7 @@ const EditarProducto = () => {
     }
 
     try {
-      const response = await axios.put(`${apiUrl}/EditarProducto/${id}`, {
+      const response = await axios.put(`${apiUrl}/editarProducto/${id}`, {
         nombre,
         descripcion,
         precio: Number(precio),
