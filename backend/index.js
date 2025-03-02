@@ -38,11 +38,15 @@ app.use("/api", editarProductos);
 
 
 // 🔹 Servir archivos estáticos de React (asegúrate de que el frontend está en "frontend/dist")
-app.use(express.static(path.join(__dirname, "frontend", "dist")));
+
+
+/* app.use(express.static(path.join(__dirname, "frontend", "dist")));
 // 🔹 Redirigir todas las rutas desconocidas al index.html de React
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
 });
+
+*/
 
 // 🔹 Iniciar el servidor
 const PORT = process.env.PORT || 3000;
