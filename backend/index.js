@@ -2,7 +2,6 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const fs = require("fs");
 const logger = require("./middlewares/logger");
 
 const app = express();
@@ -10,7 +9,7 @@ app.use(logger);
 app.use(cors());
 app.use(express.json());
 
-// 🔹 Importar rutas desde la carpeta "routes"
+// 🔹 Importar rutas de la API
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
@@ -34,28 +33,17 @@ app.use("/api", editarUsuarios);
 app.use("/api", categoryRoutes);
 app.use("/api", editarProductos);
 
-// 🔹 Manejar el frontend de React
+// 🔹 Servir el frontend de React (asegurando que las rutas sean manejadas correctamente)
 const frontendPath = path.join(__dirname, "frontend", "dist");
-const indexPath = path.join(frontendPath, "index.html");
+app.use(express.static(frontendPath));
 
-// Servir archivos estáticos del frontend
-if (fs.existsSync(indexPath)) {
-    app.use(express.static(frontendPath));
-
-    // 🔹 Manejar todas las rutas desconocidas con React (para soportar F5 y rutas directas)
-    app.get("*", (req, res) => {
-        if (req.originalUrl.startsWith("/api")) {
-            return res.status(404).json({ error: "Ruta de API no encontrada" });
-        }
-        res.sendFile(indexPath, (err) => {
-            if (err) {
-                res.status(500).send("Error al cargar la aplicación");
-            }
-        });
-    });
-} else {
-    console.error("⚠️ No se encontró el frontend en 'frontend/dist'. Ejecuta 'npm run build' en el frontend.");
-}
+// 🔹 Manejar todas las rutas desconocidas con React (para soportar F5 y rutas directas)
+app.get("*", (req, res) => {
+    if (req.originalUrl.startsWith("/api")) {
+        return res.status(404).json({ error: "Ruta de API no encontrada" });
+    }
+    res.sendFile(path.join(frontendPath, "index.html"));
+});
 
 // 🔹 Iniciar el servidor
 const PORT = process.env.PORT || 3000;
