@@ -34,7 +34,7 @@ const DetalleProducto = () => {
   }, [id]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/carrito", {
+    fetch(`${apiUrl}/api/carrito`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     })
       .then((res) => res.json())
@@ -54,7 +54,7 @@ const DetalleProducto = () => {
 
   const handleAddToCart = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/carrito", {
+      const response = await fetch(`${apiUrl}/api/carrito`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
