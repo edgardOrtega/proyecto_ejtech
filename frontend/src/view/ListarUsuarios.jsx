@@ -4,13 +4,14 @@ import { Table, Button, Spinner, Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
+
 const ListarUsuarios = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
   useEffect(() => {
     const fetchUsers = async () => {
       try {
