@@ -18,7 +18,7 @@ const Carrito = () => {
   useEffect(() => {
     if (!user) return;
 
-    fetch(`${apiUrl}:3000/api/carrito`, {
+    fetch(`${apiUrl}/api/carrito`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     })
       .then((res) => res.json())
