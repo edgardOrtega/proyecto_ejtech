@@ -49,7 +49,7 @@ const Register = () => {
     setError("");
     
     try {
-      const response = await fetch("http://localhost:3000/api/registro", {
+      const response = await fetch(`${apiUrl}/api/registro`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

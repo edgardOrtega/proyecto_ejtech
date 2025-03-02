@@ -13,10 +13,12 @@ const Carrito = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
+
   useEffect(() => {
     if (!user) return;
 
-    fetch("http://localhost:3000/api/carrito", {
+    fetch(`${apiUrl}:3000/api/carrito`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     })
       .then((res) => res.json())
@@ -36,7 +38,7 @@ const Carrito = () => {
 
   const handleRemove = async (id_producto) => {
     try {
-      await fetch(`http://localhost:3000/api/carrito/${id_producto}`, {
+      await fetch(`${apiUrl}/api/carrito/${id_producto}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
@@ -64,7 +66,7 @@ const Carrito = () => {
     if (!confirmacion.isConfirmed) return;
 
     try {
-      const response = await fetch("http://localhost:3000/api/carrito", {
+      const response = await fetch(`${apiUrl}/api/carrito`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
@@ -85,7 +87,7 @@ const Carrito = () => {
     if (newQuantity < 1 || newQuantity > stockDisponible) return;
 
     try {
-      const response = await fetch("http://localhost:3000/api/carrito", {
+      const response = await fetch(`${apiUrl}/api/carrito`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -118,7 +120,7 @@ const Carrito = () => {
     const total = cart.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
 
     try {
-      const response = await fetch("http://localhost:3000/api/orden", {
+      const response = await fetch(`${apiUrl}/api/orden`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

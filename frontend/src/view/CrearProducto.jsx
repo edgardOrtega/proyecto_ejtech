@@ -13,9 +13,9 @@ const CrearProducto = () => {
   });
 
   const [categories, setCategories] = useState([]);
-
+  const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
   useEffect(() => {
-    fetch("http://localhost:3000/api/categorias")
+    fetch(`${apiUrl}/api/categorias`)
       .then((res) => res.json())
       .then((data) => setCategories(data))
       .catch(() => Swal.fire("Error", "No se pudieron cargar las categorías", "error"));

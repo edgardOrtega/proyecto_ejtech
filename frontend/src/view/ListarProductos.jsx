@@ -4,8 +4,7 @@ import { Table, Button, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const API_URL = "http://localhost:3000/api/listarProductos"; // ✅ URL de la API real
-
+const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
 const ListarProductos = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,7 +42,7 @@ const ListarProductos = () => {
       if (result.isConfirmed) {
         try {
           // ✅ Corrige la URL del DELETE con el ID correcto
-          const response = await axios.delete(`http://localhost:3000/api/listarProductos/${id}`);
+          const response = await axios.delete(`${apiUrl}/api/listarProductos/${id}`);
   
           if (response.status === 200) {
             setProducts((prevProducts) => prevProducts.filter(product => product.id_producto !== id));

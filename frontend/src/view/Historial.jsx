@@ -8,10 +8,12 @@ const Historial = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
+
   useEffect(() => {
     if (!user) return;
 
-    fetch("http://localhost:3000/api/ordenes", {
+    fetch(`${apiUrl}/api/ordenes`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     })
       .then((res) => res.json())

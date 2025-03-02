@@ -4,8 +4,7 @@ import { Table, Button, Spinner, Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const API_URL = "http://localhost:3000/api/listarUsuarios"; // 🔹 Nueva URL para la API
-
+const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
 const ListarUsuarios = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,7 +53,7 @@ const ListarUsuarios = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.delete(`http://localhost:3000/api/listarUsuarios/${id_usuario}`, {
+          const response = await axios.delete(`${apiUrl}/api/listarUsuarios/${id_usuario}`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`, // 🔐 Si usas token
             },
