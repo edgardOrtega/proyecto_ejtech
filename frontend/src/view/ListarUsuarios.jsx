@@ -12,6 +12,7 @@ const ListarUsuarios = () => {
   const navigate = useNavigate();
 
   const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
+  
   useEffect(() => {
     const fetchUsers = async () => {
       try {

@@ -5,7 +5,7 @@ import { Form, Button, Container } from "react-bootstrap";
 import Swal from "sweetalert2";
 
 
-const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
+
 const EditarUsuario = () => {
   const { id_usuario } = useParams(); // 👈 Obtener el ID desde la URL
   const navigate = useNavigate();
@@ -16,6 +16,8 @@ const EditarUsuario = () => {
     id_rol: "",
     activo: false,
   });
+
+  const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
 
   useEffect(() => {
     const fetchUser = async () => {
