@@ -7,9 +7,11 @@ export default defineConfig({
     watch: {
       usePolling: true,
     },
-    historyApiFallback: true,  // ✅ Asegura que las rutas funcionen en recargas
+    historyApiFallback: true, // ✅ Asegura que las rutas funcionen en recargas
   },
+  base: "/",
   build: {
     target: "esnext",
+    outDir: "dist",
   },
 });
