@@ -20,11 +20,12 @@ const Register = () => {
 
   console.log(import.meta.env.VITE_API_URL);
 
+  const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
   // 🔹 Obtener roles del backend al cargar el componente
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const response = await fetch(`${VITE_API_URL}/api/roles`);
+        const response = await fetch(`${apiUrl}/api/roles`);
         const data = await response.json();
         setRoles(data);
       } catch (error) {
