@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 // Editar un usuario
-router.put("/editarUsuario/:id_usuario", async (req, res) => {
+router.put("/EditarUsuario/:id_usuario", async (req, res) => {
     try {
         const id_usuario = parseInt(req.params.id_usuario, 10);
         let { username, email, password, id_rol, activo } = req.body;

@@ -2,7 +2,7 @@ const express = require("express");
 const pool = require("../db");
 const router = express.Router();
 
-router.get("/editarProducto/:id_producto", async (req, res) => {
+router.get("/EditarProducto/:id_producto", async (req, res) => {
   const id_producto = parseInt(req.params.id_producto, 10);
 
   console.log("🔹 ID recibido en backend:", id_producto);
