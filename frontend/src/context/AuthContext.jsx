@@ -7,6 +7,8 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [authTrigger, setAuthTrigger] = useState(0); // Estado para forzar re-render (globo carrito)
 
+  const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
+
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
@@ -18,7 +20,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch("http://localhost:3000/api/login", {
+      const response = await fetch(`${apiUrl}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

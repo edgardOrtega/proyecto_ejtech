@@ -7,6 +7,7 @@ export const CartProvider = ({ children }) => {
   const { user } = useAuth();
   const [cart, setCart] = useState([]);
 
+  const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
   // ✅ Cargar el carrito del usuario desde el backend al iniciar sesión
   useEffect(() => {
     if (user) {
@@ -19,7 +20,7 @@ export const CartProvider = ({ children }) => {
     if (!user) return;
 
     try {
-      const response = await fetch("http://localhost:3000/api/carrito", {
+      const response = await fetch(`${apiUrl}/api/carrito`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -39,7 +40,7 @@ export const CartProvider = ({ children }) => {
     if (!user) return;
 
     try {
-      const response = await fetch("http://localhost:3000/api/carrito", {
+      const response = await fetch(`${apiUrl}/api/carrito`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,7 +66,7 @@ export const CartProvider = ({ children }) => {
     if (!user) return;
 
     try {
-      const response = await fetch("http://localhost:3000/api/carrito", {
+      const response = await fetch(`${apiUrl}/api/carrito`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -90,7 +91,7 @@ export const CartProvider = ({ children }) => {
     if (!user) return;
   
     try {
-      const response = await fetch(`http://localhost:3000/api/carrito/${productId}`, {
+      const response = await fetch(`${apiUrl}/api/carrito/${productId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -112,7 +113,7 @@ export const CartProvider = ({ children }) => {
     if (!user) return;
 
     try {
-      const response = await fetch("http://localhost:3000/api/carrito/clear", {
+      const response = await fetch(`${apiUrl}/api/carrito/clear`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
