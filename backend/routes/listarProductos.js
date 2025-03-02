@@ -24,9 +24,12 @@ router.get("/listarProductos", async (req, res) => {
 // Ruta para eliminar un producto por ID
 router.delete("/listarProductos/:id", async (req, res) => {
     const { id } = req.params;
-    
+
     try {
-        // Convierte el id a número 
+        // Primero, eliminar registros en detalle_orden donde id_producto sea el producto a eliminar
+        await pool.query("DELETE FROM detalle_orden WHERE id_producto = $1", [Number(id)]);
+
+        // Luego, eliminar el producto
         const result = await pool.query("DELETE FROM producto WHERE id_producto = $1 RETURNING *", [Number(id)]);
 
         if (result.rowCount === 0) {
@@ -35,9 +38,10 @@ router.delete("/listarProductos/:id", async (req, res) => {
 
         res.json({ message: "Producto eliminado correctamente", producto: result.rows[0] });
     } catch (error) {
-        console.error(" Error al eliminar producto:", error);
+        console.error("🚨 Error al eliminar producto:", error);
         res.status(500).json({ error: "Error interno del servidor" });
     }
 });
+
 
 module.exports = router;
