@@ -23,7 +23,7 @@ const Register = () => {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/roles");
+        const response = await fetch(`${VITE_API_URL}/api/roles`);
         const data = await response.json();
         setRoles(data);
       } catch (error) {
