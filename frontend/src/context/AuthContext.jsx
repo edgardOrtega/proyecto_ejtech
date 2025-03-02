@@ -4,51 +4,52 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // 🔹 Nuevo estado para evitar redirecciones incorrectas
+  const [loading, setLoading] = useState(true);
+  const [authTrigger, setAuthTrigger] = useState(0); // Estado para forzar re-render (globo carrito)
 
   useEffect(() => {
-    // 🔹 Intentar recuperar el usuario desde localStorage
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
       const parsedUser = JSON.parse(savedUser);
-      setUser({ ...parsedUser, rol: Number(parsedUser.rol),username:parsedUser.username }); // Convertir rol a número
+      setUser({ ...parsedUser, rol: Number(parsedUser.rol), username: parsedUser.username });
     }
-    setLoading(false); // 🔹 Marcar que la carga ha terminado
+    setLoading(false);
   }, []);
 
   const login = async (email, password) => {
     try {
-        const response = await fetch("http://localhost:3000/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-        });
+      const response = await fetch("http://localhost:3000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-        const data = await response.json();
+      const data = await response.json();
 
-        if (!response.ok) {
-            throw new Error(data.error || "Error al iniciar sesión");
-        }
-        console.log(data)
-        const userData = { email, username: data.username, rol: Number(data.rol) };
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(userData));
-        setUser(userData);
-        console.log(userData)
-        return { success: true, rol: userData.rol };
+      if (!response.ok) {
+        throw new Error(data.error || "Error al iniciar sesión");
+      }
+
+      const userData = { email, username: data.username, rol: Number(data.rol) };
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(userData));
+      setUser(userData);
+      setAuthTrigger((prev) => prev + 1); // 🔥 Forzar re-render de Navbar
+      return { success: true, rol: userData.rol };
     } catch (error) {
-        return { success: false, message: error.message };
+      return { success: false, message: error.message };
     }
-};
+  };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    setAuthTrigger((prev) => prev + 1); // 🔥 Forzar re-render de Navbar
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, loading, login, logout, authTrigger }}>
       {children}
     </AuthContext.Provider>
   );
