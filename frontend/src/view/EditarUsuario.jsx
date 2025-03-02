@@ -5,7 +5,7 @@ import { Form, Button, Container } from "react-bootstrap";
 import Swal from "sweetalert2";
 
 const EditarUsuario = () => {
-  const { id_usuario } = useParams(); // 👈 Obtener el ID desde la URL
+  const { id_usuario } = useParams(); 
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
     username: "",
@@ -15,22 +15,22 @@ const EditarUsuario = () => {
     activo: false,
   });
 
-  const [initialUserData, setInitialUserData] = useState(null); // Guardar valores originales
+  const [initialUserData, setInitialUserData] = useState(null); 
 
-  const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
+  const apiUrl = import.meta.env.VITE_API_URL; 
 
   useEffect(() => {
     const fetchUser = async () => {
-      console.log(`🔎 URL de la API: ${apiUrl}/api/editarUsuario/${id_usuario}`); // ✅ Verificar en consola
+      console.log(`🔎 URL de la API: ${apiUrl}/api/editarUsuario/${id_usuario}`);
       try {
         const response = await axios.get(`${apiUrl}/api/editarUsuario/${id_usuario}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        console.log("✅ Datos recibidos:", response.data); // ✅ Verificar los datos recibidos
+        console.log("✅ Datos recibidos:", response.data);
         setUserData(response.data);
-        setInitialUserData(response.data); // Guardar valores iniciales
+        setInitialUserData(response.data); 
       } catch (error) {
         console.error("❌ Error al obtener usuario:", error.response || error);
         Swal.fire("Error", "Usuario no encontrado", "error");
@@ -57,12 +57,13 @@ const EditarUsuario = () => {
     const emailChanged = userData.email !== initialUserData.email;
     const passwordChanged = userData.password.trim() !== "";
 
+    // Validación: si cambia el email, debe cambiar la contraseña (y viceversa)
     if ((emailChanged && !passwordChanged) || (!emailChanged && passwordChanged)) {
       Swal.fire("Error", "Si cambias el email, también debes cambiar la contraseña (y viceversa)", "warning");
       return;
     }
 
-    // Preparar el payload solo con los campos necesarios
+    // Construir el payload solo con los datos editados
     const payload = {
       username: userData.username,
       email: userData.email,
@@ -70,7 +71,7 @@ const EditarUsuario = () => {
       activo: userData.activo,
     };
 
-    // Si la contraseña no está vacía, incluirla
+    // Si la contraseña se ha cambiado, incluirla en la actualización
     if (passwordChanged) {
       payload.password = userData.password;
     }
