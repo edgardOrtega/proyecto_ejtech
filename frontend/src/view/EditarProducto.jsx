@@ -17,7 +17,7 @@ const EditarProducto = () => {
     const fetchProducto = async () => {
       try {
         console.log("ID recibido:", id);
-        const response = await axios.get(`${apiUrl}/${id}`);
+        const response = await axios.get(`${apiUrl}/EditarProducto/${id}`);
         console.log("Respuesta de la API:", response.data);
 
         if (!response.data) {
@@ -50,7 +50,7 @@ const EditarProducto = () => {
     }
 
     try {
-      const response = await axios.put(`${apiUrl}/${id}`, {
+      const response = await axios.put(`${apiUrl}/EditarProducto/${id}`, {
         nombre,
         descripcion,
         precio: Number(precio),
