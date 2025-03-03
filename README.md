@@ -1,7 +1,7 @@
 # Proyecto EJtech - Hito 4
 
 ## ⚠️⚠️⚠️ ¡ ATENCIÓN ! ⚠️⚠️⚠️  
-**El [link deploy](https://frontend-adl.onrender.com/) del Hito 4 se encuentra en el apartado "About".**
+**El [link deploy del Hito 4](https://frontend-adl.onrender.com/) se encuentra en el apartado "About".**
 
 ---
 ---
