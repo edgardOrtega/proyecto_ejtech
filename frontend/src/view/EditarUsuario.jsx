@@ -116,13 +116,13 @@ const EditarUsuario = () => {
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>Contraseña (Déjalo vacío si no deseas cambiarla)</Form.Label>
+          <Form.Label>Contraseña</Form.Label>
           <Form.Control
             type="password"
             name="password"
             value={userData.password}
             placeholder="Nueva contraseña"
-            onChange={handleChange}
+            onChange={handleChange} required
           />
         </Form.Group>
 
