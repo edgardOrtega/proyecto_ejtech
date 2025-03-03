@@ -3,6 +3,14 @@
 ## ⚠️⚠️⚠️ ¡ ATENCIÓN ! ⚠️⚠️⚠️  
 **El [link deploy del Hito 4](https://frontend-adl.onrender.com/) se encuentra en el apartado "About".**
 
+
+## Objetivos logrados con Render
+<ul>
+    <li>Despliegue de Database. ✅</li>
+    <li>Despliegue del Back End. ✅</li>
+    <li>Despliegue de Front End. ✅</li>
+</ul>
+
 ---
 ---
 ## Lo siguiente corresponde solo al Hito 3 - Ignorar en revisión de Hito 4:
