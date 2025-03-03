@@ -5,16 +5,16 @@ import { Form, Button, Container } from "react-bootstrap";
 import Swal from "sweetalert2";
 
 const EditarUsuario = () => {
-  const { id_usuario } = useParams(); // Obtener el ID desde la URL
+  const { id_usuario } = useParams();
   const navigate = useNavigate();
-  const apiUrl = import.meta.env.VITE_API_URL; // Para Vite
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const [userData, setUserData] = useState({
     username: "",
     email: "",
     id_rol: "",
-    activo: false,
-    password: "", // Este campo inicia vacío y solo se usará si el usuario la cambia
+    activo: true,
+    password: "",
   });
 
   useEffect(() => {
@@ -28,7 +28,6 @@ const EditarUsuario = () => {
           },
         });
 
-        // Excluir la contraseña encriptada del estado
         const { password, ...userWithoutPassword } = response.data;
         console.log("✅ Datos recibidos:", userWithoutPassword);
 
@@ -54,7 +53,12 @@ const EditarUsuario = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Crear el objeto con los datos a actualizar
+    // Validación antes de enviar
+    if (!userData.username.trim() || !userData.email.trim() || !userData.id_rol) {
+      Swal.fire("Error", "Por favor, completa todos los campos obligatorios.", "warning");
+      return;
+    }
+
     const payload = {
       username: userData.username,
       email: userData.email,
@@ -62,7 +66,6 @@ const EditarUsuario = () => {
       activo: userData.activo,
     };
 
-    // Si el usuario ingresó una nueva contraseña, la enviamos en la petición
     if (userData.password.trim() !== "") {
       payload.password = userData.password;
     }
