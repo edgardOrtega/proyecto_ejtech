@@ -30,7 +30,6 @@ const Navegation = () => {
 
   // 🔥 Se ejecuta cada vez que cambia authTrigger (login/logout)
   useEffect(() => {
-    console.log("🔄 Navbar actualizado por authTrigger:", authTrigger);
   }, [authTrigger]);
 
   return (
