@@ -55,9 +55,26 @@ const EditarUsuario = () => {
 
     // Validación antes de enviar
     if (!userData.username.trim() || !userData.email.trim() || !userData.id_rol) {
-      Swal.fire("Error", "Por favor, completa todos los campos obligatorios.", "warning");
+      Swal.fire({
+        title: "Campos incompletos",
+        text: "Por favor, completa todos los campos obligatorios antes de continuar.",
+        icon: "warning",
+        confirmButtonText: "Entendido",
+      });
       return;
     }
+
+    // Confirmación antes de enviar
+    const result = await Swal.fire({
+      title: "¿Guardar cambios?",
+      text: "¿Estás seguro de actualizar este usuario?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Sí, guardar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!result.isConfirmed) return;
 
     const payload = {
       username: userData.username,
