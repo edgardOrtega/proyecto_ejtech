@@ -1,4 +1,13 @@
-# Proyecto EJtech
+# Proyecto EJtech - Hito 4
+
+## ⚠️⚠️⚠️ ¡ ATENCIÓN ! ⚠️⚠️⚠️  
+**El [link deploy](https://frontend-adl.onrender.com/) del Hito 4 se encuentra en el apartado "About".**
+
+---
+---
+## Lo siguiente corresponde solo al Hito 3 - Ignorar en revisión de Hito 4:
+---
+---
 
 ## 📌 Descripción
 **EJtech** es un **Marketplace** de artículos tecnológicos que permite la compra y gestión de productos mediante una plataforma web. La aplicación tiene autenticación de usuarios con diferentes roles (*Cliente y Administrador*) para gestionar productos y compras.
