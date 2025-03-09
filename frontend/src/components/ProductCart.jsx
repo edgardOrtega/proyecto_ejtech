@@ -6,7 +6,7 @@ const ProductCard = ({ product }) => {
   const { addToCart, cart } = useCart();
   const [quantity, setQuantity] = useState(0);
 
-  // 🔹 Sincronizar con el carrito al cargar el componente
+  //  Sincronizar con el carrito al cargar el componente
   useEffect(() => {
     const itemEnCarrito = cart.find((item) => item.id === product.id);
     if (itemEnCarrito) {
@@ -14,7 +14,7 @@ const ProductCard = ({ product }) => {
     }
   }, [cart, product.id]);
 
-  // 🔹 Función para formatear CLP sin decimales y en el formato correcto
+  // Función para formatear CLP sin decimales y en el formato correcto
   const formatoCLP = (valor) => {
     return `$${Number(valor).toLocaleString("es-CL", { minimumFractionDigits: 0 })}`;
   };
