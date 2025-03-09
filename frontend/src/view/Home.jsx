@@ -2,9 +2,10 @@ import React from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import grupoImage from "../assets/grupo.png";
 import { useNavigate } from "react-router-dom";
-const Home = () => {
 
+const Home = () => {
   const navigate = useNavigate();
+
   return (
     <Container className="py-5">
       <Row className="align-items-center">
@@ -15,12 +16,15 @@ const Home = () => {
             <strong>PROYECTO TECNOLÓGICO</strong>
           </h1>
           <p className="text-secondary">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut a enim
-            nec nisl ullamcorper eleifend. Praesent risus leo, fringilla et
-            ipsum.
+            Nuestra plataforma digital revoluciona la forma en que interactúas con la tecnología. 
+            Con soluciones innovadoras, conectividad en tiempo real y herramientas intuitivas, 
+            facilitamos la digitalización y el crecimiento de tu negocio en el mundo digital.
           </p>
-          <Button style={{ backgroundColor: "#fefe00", color: "black", border: "none", fontWeight: "bold" }}
-          onClick={() => navigate("/Ejtech")} >
+          <Button 
+            className="mt-3 d-block d-md-inline" 
+            style={{ backgroundColor: "#fefe00", color: "black", border: "none", fontWeight: "bold" }}
+            onClick={() => navigate("/Ejtech")}
+          >
             DESCÚBRELO
           </Button>
         </Col>
