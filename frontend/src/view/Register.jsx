@@ -11,7 +11,7 @@ const Register = () => {
     password: "",
     confirmPassword: "",
     fecha_nacimiento: "",
-    id_rol: "", // Ahora el id_rol será seleccionado por el usuario
+    id_rol: 2, // Ahora el id_rol será seleccionado por el usuario
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -108,19 +108,6 @@ const Register = () => {
                   <FaEye />
                 </Button>
               </InputGroup>
-            </Form.Group>
-
-            {/* 🔹 Selector de roles */}
-            <Form.Group className="mb-3">
-              <Form.Label>Selecciona tu Rol</Form.Label>
-              <Form.Select name="id_rol" required onChange={handleChange}>
-                <option value="">Selecciona un rol</option>
-                {roles.map((rol) => (
-                  <option key={rol.id_rol} value={rol.id_rol}>
-                    {rol.nombre}
-                  </option>
-                ))}
-              </Form.Select>
             </Form.Group>
 
             {error && <p className="text-danger">{error}</p>}

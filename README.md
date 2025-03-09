@@ -4,6 +4,9 @@
 **El [link deploy del Hito 4](https://frontend-adl.onrender.com/) se encuentra en el apartado "About".**
 
 
+email para revision: tutor@tutor.com
+contraseña tutor   : 12345
+
 ## Objetivos logrados con Render
 <ul>
     <li>Despliegue de Database. ✅</li>
