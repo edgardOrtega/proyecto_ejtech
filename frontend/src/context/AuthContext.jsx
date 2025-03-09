@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
-      setAuthTrigger((prev) => prev + 1); // 🔥 Forzar re-render de Navbar
+      setAuthTrigger((prev) => prev + 1); //  Forzar re-render de Navbar
       return { success: true, rol: userData.rol };
     } catch (error) {
       return { success: false, message: error.message };

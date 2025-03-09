@@ -21,7 +21,7 @@ const editarProductos = require("./routes/editarProducto");
 const listarProductos = require("./routes/listarProductos");
 const categoryRoutes = require("./routes/categoryRoutes");
 
-// 🔹 Definir rutas de la API
+// Definir rutas de la API
 app.use("/api", authRoutes);
 app.use("/api", userRoutes);
 app.use("/api", productRoutes);

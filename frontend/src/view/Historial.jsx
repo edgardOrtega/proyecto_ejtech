@@ -27,10 +27,7 @@ const Historial = () => {
       });
   }, [user]);
 
-  // 🔹 Formato de CLP con separadores de miles
-  const formatoCLP = (valor) => {
-    return `$${Number(valor).toLocaleString("es-CL")}`;
-  };
+  const formatoCLP = (valor) => `$${Number(valor).toLocaleString("es-CL")}`;
 
   return (
     <Container className="mt-5 text-center">
@@ -44,8 +41,8 @@ const Historial = () => {
         history.slice().reverse().map((order) => (
           <Card
             key={order.id_orden}
-            className="mb-4 shadow-sm"
-            style={{ border: "3px solid yellow", maxWidth: "750px", margin: "0 auto", padding: "20px" }}
+            className="mb-4 shadow-sm mx-auto p-3"
+            style={{ border: "3px solid yellow", maxWidth: "750px" }}
           >
             <Card.Body>
               <Row className="align-items-center mb-3">
@@ -58,14 +55,22 @@ const Historial = () => {
               </Row>
 
               {order.productos.map((product) => (
-                <Row key={product.id_producto} className="align-items-center mb-3 text-start">
-                  <Col xs={3} className="text-center">
-                    <img src={product.imagen} alt={product.nombre} className="img-fluid" style={{ maxWidth: "100px" }} />
+                <Row
+                  key={product.id_producto}
+                  className="align-items-center mb-3 text-start flex-wrap"
+                >
+                  <Col xs={12} sm={3} className="text-center mb-2 mb-sm-0">
+                    <img
+                      src={product.imagen}
+                      alt={product.nombre}
+                      className="img-fluid"
+                      style={{ maxWidth: "100%", height: "auto", borderRadius: "8px" }}
+                    />
                   </Col>
-                  <Col xs={9}>
-                    <p className="fw-bold">{product.nombre}</p>
-                    <p><strong>Cantidad:</strong> {product.cantidad}</p>
-                    <p><strong>Subtotal:</strong> {formatoCLP(product.subtotal)}</p>
+                  <Col xs={12} sm={9} className="text-sm-start text-center">
+                    <p className="fw-bold mb-1" style={{ overflowWrap: "break-word" }}>{product.nombre}</p>
+                    <p className="mb-1"><strong>Cantidad:</strong> {product.cantidad}</p>
+                    <p className="mb-0"><strong>Subtotal:</strong> {formatoCLP(product.subtotal)}</p>
                   </Col>
                 </Row>
               ))}
