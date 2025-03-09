@@ -30,7 +30,7 @@ const Home = () => {
         </Col>
 
         {/* Imagen */}
-        <Col md={6} className="text-center">
+        <Col md={6} className="text-center mt-4 mt-md-0">
           <img
             src={grupoImage}
             alt="Proyecto Tecnológico"
