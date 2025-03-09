@@ -14,7 +14,7 @@ const Ejtech = () => {
 
       <h3 className="mb-4">Creadores</h3>
       <Row className="justify-content-center mt-4">
-        <Col md={4} className="d-flex justify-content-center">
+        <Col xs={12} md={4} className="d-flex justify-content-center mb-3">
           <Card style={{ width: '18rem', border: '2px solid #fefe00', boxShadow: '5px 5px 15px rgba(0, 0, 0, 0.2)' }}>
             <Card.Img variant="top" src={imagenCreador1} alt="Creador 1" className="p-2 rounded" />
             <Card.Body className="text-center">
@@ -24,7 +24,7 @@ const Ejtech = () => {
         </Col>
 
 
-        <Col md={4} className="d-flex justify-content-center">
+        <Col xs={12} md={4} className="d-flex justify-content-center mb-3">
           <Card style={{ width: '18rem', border: '2px solid #fefe00', boxShadow: '5px 5px 15px rgba(0, 0, 0, 0.2)' }}>
             <Card.Img variant="top" src={imagenCreador2} alt="Creador 2" className="p-2 rounded" />
             <Card.Body className="text-center">
