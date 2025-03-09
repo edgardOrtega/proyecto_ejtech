@@ -182,7 +182,7 @@ const Carrito = () => {
                   </Button>
                   <FormControl className="text-center" value={product.cantidad} readOnly />
                   <Button
-                    variant="outline-secondary"
+                    variant="outline-secondary" className="mt-2"
                     onClick={() => handleUpdateQuantity(product.id_producto, product.cantidad + 1, product.stock)}
                     disabled={product.cantidad >= product.stock}
                   >
@@ -191,7 +191,7 @@ const Carrito = () => {
                 </InputGroup>
               </Col>
 
-              <Col md={3} className="text-center">
+              <Col md={3} className="text-center "> className="mt-2"
                 <Button variant="danger" onClick={() => handleRemove(product.id_producto)}>Eliminar</Button>
               </Col>
             </Row>
