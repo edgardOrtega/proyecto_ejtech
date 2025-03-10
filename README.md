@@ -3,9 +3,12 @@
 ## ⚠️⚠️⚠️ ¡ ATENCIÓN ! ⚠️⚠️⚠️  
 **El [link deploy del Hito 4](https://frontend-adl.onrender.com/) se encuentra en el apartado "About".**
 
+**Importante para el tutor revisor: Para hacer Log In como Administrador, le otorgamos el siguiente usuario.**
+<ul>
+    <li>Email: tutor@tutor.com</li>
+    <li>Pass: 12345</li>
+</ul>
 
-email para revision: tutor@tutor.com
-contraseña tutor   : 12345
 
 ## Objetivos logrados con Render
 <ul>
