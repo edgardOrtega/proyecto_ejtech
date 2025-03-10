@@ -171,7 +171,7 @@ const Carrito = () => {
                 <p className="fw-bold text-success">Subtotal: {formatoCLP(product.precio * product.cantidad)}</p>
               </Col>
 
-              <Col md={3} className="text-center">
+              <Col md={3} className="text-center mt-2">
                 <InputGroup>
                   <Button
                     variant="outline-secondary"
